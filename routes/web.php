@@ -18,7 +18,7 @@ use App\Http\Controllers\Owner\OwnerDashboardController;
 use App\Http\Controllers\Owner\OwnerLaporanController;
 use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;           
 use App\Http\Controllers\Karyawan\KaryawanTransaksiController;
-use App\Http\Controllers\pelanggan\DashboardController as pelangganDashboardController;           
+use App\Http\Controllers\Pelanggan\PelangganDashboardController;
 use App\Http\Controllers\pelanggan\pelangganTransaksiController;
 
 
@@ -86,6 +86,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
 });
 
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+    ->name('admin.dashboard');
+    use App\Http\Controllers\Admin\AdminDashboardController;
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
+        ->name('admin.dashboard');
+});
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -96,7 +106,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     // Dashboard User
     Route::get('/dashboard', function () {
-        return view('user.dashboard');
+        return view('pelanggan.dashboard');
     })->name('dashboard');
     // Tambahkan route untuk profil user
     Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');
@@ -149,13 +159,26 @@ Route::middleware(['auth', 'role:karyawan'])
         Route::resource('transaksi', KaryawanTransaksiController::class);
     });
 
+    Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
+    Route::resource('transaksi', \App\Http\Controllers\Karyawan\TransaksiController::class);
+});
+
+
     Route::middleware(['auth', 'role:pelanggan'])
     ->prefix('pelanggan')
     ->name('pelanggan.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('pelanggan.dashboard');
-        })->name('dashboard');
 
-        Route::resource('transaksi', KaryawanTransaksiController::class);
-    });
+    Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
+        ->name('dashboard');
+
+    Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [UserProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])->name('profile.password.update');
+
+    Route::resource('transaksi', UserTransaksiController::class);
+});
+
+
+    //     Route::resource('transaksi', KaryawanTransaksiController::class);
+    // });

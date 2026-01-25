@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Dashboard Admin')
+@section('title', 'Dashboard Pelanggan')
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
     <div class="card shadow mb-4">

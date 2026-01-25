@@ -33,6 +33,14 @@
                 <span>Karyawan</span>
             </a>
         </li>
+        
+        <li class="nav-item {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.pelanggan.index') }}">
+                <i class="fas fa-users"></i>
+                <span>Pelanggan</span>
+            </a>
+        </li>
+
 
         <li class="nav-item {{ request()->is('admin/layanan*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.layanan.index') }}">
@@ -96,7 +104,6 @@
                 <span>Kelola Transaksi</span>
             </a>
         </li>
-    @endif
 
     @elseif(auth()->user()->role === 'pelanggan')
         

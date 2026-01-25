@@ -8,50 +8,57 @@
 <div class="card shadow mb-4">
     <div class="card-body">
         <form action="{{ route('karyawan.transaksi.store') }}" method="POST">
-            @csrf
+    @csrf
 
-            {{-- Layanan --}}
-            <div class="form-group">
-                <label>Jenis Layanan</label>
-                <select name="layanan_id" class="form-control" required>
-                    <option value="">-- Pilih Layanan --</option>
-                    @foreach($layanans as $layanan)
-                        <option value="{{ $layanan->id }}"
-                                data-harga="{{ $layanan->harga_per_kg }}">
-                            {{ $layanan->nama_layanan }} - Rp {{ number_format($layanan->harga_per_kg) }}/Kg
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+    {{-- Layanan --}}
+    <div class="form-group">
+        <label>Jenis Layanan</label>
+        <select name="layanan_id" class="form-control" required>
+            <option value="">-- Pilih Layanan --</option>
+            @foreach($layanans as $layanan)
+                <option value="{{ $layanan->id }}"
+                        data-harga="{{ $layanan->harga_per_kg }}">
+                    {{ $layanan->nama_layanan }} - Rp {{ number_format($layanan->harga_per_kg) }}/Kg
+                </option>
+            @endforeach
+        </select>
+    </div>
 
-            {{-- Berat --}}
-            <div class="form-group">
-                <label>Berat (Kg)</label>
-                <input type="number" name="berat_kg" class="form-control"
-                       step="0.1" min="1" required>
-            </div>
+    {{-- Berat --}}
+    <div class="form-group">
+        <label>Berat (Kg)</label>
+        <input type="number" name="berat" class="form-control" step="0.1" min="1" required>
+    </div>
 
-            {{-- Metode Pembayaran --}}
-            <div class="form-group">
-                <label>Metode Pembayaran</label>
-                <select name="metode_pembayaran_id" class="form-control" required>
-                    <option value="">-- Pilih Metode --</option>
-                    @foreach($metodePembayarans as $metode)
-                        <option value="{{ $metode->id }}">{{ $metode->nama_metode }}</option>
-                    @endforeach
-                </select>
-            </div>
+    {{-- Metode Pembayaran --}}
+    <div class="form-group">
+        <label>Metode Pembayaran</label>
+        <select name="metode_pembayaran" class="form-control" required>
+            <option value="">-- Pilih Metode --</option>
+            <option value="cash">Cash</option>
+            <option value="transfer">Transfer</option>
+            <option value="qris">QRIS</option>
+        </select>
+    </div>
 
-            {{-- Total --}}
-            <div class="form-group">
-                <label>Total Harga</label>
-                <input type="text" id="total" class="form-control" readonly>
-            </div>
+    {{-- Tanggal --}}
+    <div class="form-group">
+        <label>Tanggal Transaksi</label>
+        <input type="date" name="tanggal_transaksi" class="form-control"
+               value="{{ date('Y-m-d') }}" required>
+    </div>
 
-            <button class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan Transaksi
-            </button>
-        </form>
+    {{-- Total --}}
+    <div class="form-group">
+        <label>Total Harga</label>
+        <input type="text" id="total" class="form-control" readonly>
+    </div>
+
+    <button class="btn btn-primary">
+        <i class="fas fa-save"></i> Simpan Transaksi
+    </button>
+</form>
+
     </div>
 </div>
 @endsection
