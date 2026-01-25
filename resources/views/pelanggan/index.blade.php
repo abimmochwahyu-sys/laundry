@@ -17,14 +17,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pelanggans as $p)
+                    @foreach($pelanggans as $p)
                         <tr>
                             <td>{{ $p->id }}</td>
-                            <td>{{ $p->user->name }}</td>
-                            <td>{{ $p->user->email }}</td>
-                            <td>{{ $p->alamat }}</td>
-                            <td>{{ $p->telepon }}</td>
-
+                            <td>{{ $p->name }}</td>
+                            <td>{{ $p->email }}</td>
+                            <td>{{ $p->alamat ?? '-' }}</td>
+                            <td>{{ $p->telepon ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.pelanggan.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>
 

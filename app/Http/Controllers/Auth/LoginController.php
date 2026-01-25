@@ -40,6 +40,8 @@ class LoginController extends Controller
                 return redirect()->route('karyawan.dashboard')->with('success', 'Selamat datang Karyawan!');
             case 'owner':
                 return redirect()->route('owner.dashboard')->with('success', 'Selamat datang Owner!');
+            case 'pelanggan':
+                return redirect()->route('pelanggan.dashboard')->with('success', 'Selamat datang Pelanggan!');
             default:
                 Auth::logout();
                 return redirect('/login')->with('error', 'Role tidak dikenali.');

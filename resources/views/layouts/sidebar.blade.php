@@ -33,6 +33,14 @@
                 <span>Karyawan</span>
             </a>
         </li>
+        
+        <li class="nav-item {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.pelanggan.index') }}">
+                <i class="fas fa-users"></i>
+                <span>Pelanggan</span>
+            </a>
+        </li>
+
 
         <li class="nav-item {{ request()->is('admin/layanan*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.layanan.index') }}">
@@ -92,6 +100,22 @@
 
         <li class="nav-item {{ request()->is('karyawan/transaksi') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('karyawan.transaksi.index') }}">
+                <i class="fas fa-fw fa-money-bill-wave"></i>
+                <span>Kelola Transaksi</span>
+            </a>
+        </li>
+
+    @elseif(auth()->user()->role === 'pelanggan')
+        
+        <li class="nav-item {{ request()->is('pelanggan/dashboard') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pelanggan.dashboard') }}">
+                <i class="fas fa-fw fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('pelanggan/transaksi') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pelanggan.transaksi.index') }}">
                 <i class="fas fa-fw fa-money-bill-wave"></i>
                 <span>Kelola Transaksi</span>
             </a>

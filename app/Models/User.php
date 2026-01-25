@@ -28,7 +28,7 @@ class User extends Authenticatable
         return $this->hasMany(Transaksi::class, 'user_id');
     }
 
-    public function pelanggan()
+   public function pelanggan()
 {
     return $this->hasOne(Pelanggan::class);
 }

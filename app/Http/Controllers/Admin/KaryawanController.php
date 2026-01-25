@@ -27,7 +27,9 @@ class KaryawanController extends Controller
     $request->validate([
         'nama'     => 'required|string|max:255',
         'email'    => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6|confirmed', // pastikan ada input password_confirmation di form
+        'password' => 'required|string|min:6|confirmed', // pastikan ada input password_confirmation di form  
+        'telepon' => 'required',
+        'alamat'  => 'required',
     ]);
 
     // Buat user baru
@@ -41,8 +43,8 @@ class KaryawanController extends Controller
     // Buat data karyawan terkait user
     Karyawan::create([
         'user_id' => $user->id,
-        'telepon' => "-",
-        'alamat'  => "-",
+        'telepon' => $request->telepon,
+        'alamat'  => $request->alamat,
     ]);
 
     return redirect()

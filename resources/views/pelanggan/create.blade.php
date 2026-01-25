@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Tambah Pelanggan')
+@section('title','Tambah Pelanggan')
 
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Tambah Pelanggan</h1>
@@ -25,11 +25,6 @@
                 </div>
                 <div class="form-group mb-3">
                     <label>Email</label>
-                    <input type="email" name="email" class="form-control" required>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label>Alamat</label>
                     <textarea name="alamat" class="form-control" required></textarea>
                 </div>
                 <div class="form-group mb-3">

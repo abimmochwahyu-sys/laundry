@@ -3,62 +3,93 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PelangganController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $pelanggans = User::where('role', 'pelanggan')->paginate(10);
+        $pelanggans = Pelanggan::with('user')->paginate(10);
         return view('admin.pelanggan.index', compact('pelanggans'));
     }
 
     public function create()
     {
-        return view('admin.pelanggan.create'); // ✅ arahkan ke folder admin
+        return view('admin.pelanggan.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:100',
-            'alamat' => 'required|string|max:255',
-            'telepon' => 'required|string|max:15',
+            'nama'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
+            'alamat'   => 'required|string|max:255',
+            'telepon'  => 'required|string|max:15',
         ]);
 
-        Pelanggan::create($request->all());
+        // simpan ke tabel users
+        $user = User::create([
+            'name'     => $request->nama,
+            'email'    => $request->email,
+            'password' => Hash::make('password'),
+            'role'     => 'pelanggan',
+        ]);
 
-        return redirect()->route('admin.pelanggan.index') // ✅ route pakai prefix admin
+        // simpan ke tabel pelanggans
+        Pelanggan::create([
+            'user_id' => $user->id,
+            'alamat'  => $request->alamat,
+            'telepon' => $request->telepon,
+        ]);
+
+        return redirect()->route('admin.pelanggan.index')
             ->with('success', 'Pelanggan berhasil ditambahkan');
     }
 
-    public function edit(Pelanggan $pelanggan)
+    public function edit($id)
     {
-        return view('admin.pelanggan.edit', compact('pelanggan')); // ✅ arahkan ke folder admin
+        $pelanggan = Pelanggan::with('user')->findOrFail($id);
+        return view('admin.pelanggan.edit', compact('pelanggan'));
     }
 
-    public function update(Request $request, Pelanggan $pelanggan)
+    public function update(Request $request, $id)
     {
+        $pelanggan = Pelanggan::findOrFail($id);
+
         $request->validate([
-            'nama' => 'required|string|max:100',
-            'alamat' => 'required|string|max:255',
-            'telepon' => 'required|string|max:15',
+            'nama'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email,' . $pelanggan->user_id,
+            'alamat'   => 'required|string|max:255',
+            'telepon'  => 'required|string|max:15',
         ]);
 
-        $pelanggan->update($request->all());
+        // update user
+        $pelanggan->user->update([
+            'name'  => $request->nama,
+            'email' => $request->email,
+        ]);
 
-        return redirect()->route('admin.pelanggan.index') // ✅ route pakai prefix admin
+        // update pelanggan
+        $pelanggan->update([
+            'alamat'  => $request->alamat,
+            'telepon' => $request->telepon,
+        ]);
+
+        return redirect()->route('admin.pelanggan.index')
             ->with('success', 'Pelanggan berhasil diperbarui');
     }
 
-    public function destroy(Pelanggan $pelanggan)
+    public function destroy($id)
     {
+        $pelanggan = Pelanggan::findOrFail($id);
+
+        // hapus user + pelanggan
+        $pelanggan->user->delete();
         $pelanggan->delete();
-        return redirect()->route('admin.pelanggan.index') // ✅ route pakai prefix admin
+
+        return redirect()->route('admin.pelanggan.index')
             ->with('success', 'Pelanggan berhasil dihapus');
     }
 }
