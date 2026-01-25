@@ -12,7 +12,6 @@ class Pelanggan extends Model
     protected $table = 'pelanggans';
 
     protected $fillable = [
-        'id',
         'user_id',
         'alamat',
         'telepon'
