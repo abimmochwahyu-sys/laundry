@@ -17,13 +17,13 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Informasi Transaksi</h6>
-                    <!-- <span class="badge 
+                    <span class="badge 
                         @if($transaksi->status_pembayaran == 'pending') bg-warning 
                         @elseif($transaksi->status_pembayaran == 'lunas') bg-success 
                         @endif
                         text-white">
                         {{ ucfirst($transaksi->status_pembayaran) }}
-                    </span> -->
+                    </span>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -55,13 +55,13 @@
                             <tr>
                                 <th>Status Pembayaran</th>
                                 <td>
-                                    <!-- <span class="badge 
+                                    <span class="badge 
                                         @if($transaksi->status_pembayaran == 'pending') bg-warning 
                                         @elseif($transaksi->status_pembayaran == 'lunas') bg-success 
                                         @endif
                                         text-white">
                                         {{ ucfirst($transaksi->status_pembayaran) }}
-                                    </span> -->
+                                    </span>
                                 </td>
                             </tr>
                         </table>
