@@ -84,11 +84,16 @@ class KaryawanController extends Controller
 
 
     public function destroy(Karyawan $karyawan)
-    {
-        $karyawan->delete();
+{
+    // ambil user terkait
+    $user = $karyawan->user;
 
-        return redirect()
-            ->route('admin.karyawan.index')
-            ->with('success', 'Karyawan berhasil dihapus');
-    }
+    // hapus USER (karyawan akan ikut kehapus otomatis)
+    $user->delete();
+
+    return redirect()
+        ->route('admin.karyawan.index')
+        ->with('success', 'Karyawan berhasil dihapus');
+}
+
 }

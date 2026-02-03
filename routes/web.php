@@ -20,7 +20,7 @@ use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardContro
 use App\Http\Controllers\Karyawan\KaryawanTransaksiController;
 use App\Http\Controllers\Pelanggan\PelangganDashboardController;
 use App\Http\Controllers\pelanggan\pelangganTransaksiController;
-
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 
 
@@ -86,9 +86,26 @@ Route::middleware(['auth'])->group(function () {
         ->name('transaksi.lunas');
 
     // Laporan Routes
-    Route::get('/laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
+Route::get('/laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])
+    ->name('laporan.index');
+
+Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'export'])
+    ->name('laporan.export');
+
+// ✅ TAMBAHAN INVOICE
+Route::get('/laporan/invoice/{id}', [App\Http\Controllers\Admin\LaporanController::class, 'invoice'])
+    ->name('laporan.invoice');
+
 });
+
+
+Route::middleware(['auth'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+    });
 
 
 /*

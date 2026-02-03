@@ -41,8 +41,6 @@
                 <div class="form-group mb-3">
                     <label>No Telepon</label>
                     <input type="text" name="telepon" class="form-control" value="{{ old('telepon', $pelanggan->telepon) }}" required>
-                    <input type="text" name="telepon" class="form-control"
-                        value="{{ old('telepon', $pelanggan->telepon) }}" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update</button>
