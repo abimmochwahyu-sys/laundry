@@ -93,7 +93,7 @@
 
     {{-- HEADER --}}
     <div class="header text-center">
-        <h2>LAUNDRY BERSIH</h2>
+        <h2>SICLEAN LAUNDRY</h2>
         <small>
             Jl. Contoh No. 123<br>
             Telp: 08xxxxxxxx
@@ -168,13 +168,9 @@
 
     <div class="divider"></div>
 
-    {{-- GRAND TOTAL --}}
-    <div class="grand-total">
-        TOTAL<br>
-        Rp {{ number_format($transaksi->total_akhir, 0, ',', '.') }}
-    </div>
+    
 
-    <div class="divider"></div>
+    <!-- <div class="divider"></div> -->
 
     {{-- FOOTER --}}
     <div class="footer text-center">

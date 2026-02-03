@@ -9,7 +9,7 @@ class Transaksi extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksis'; // pastikan sesuai nama tabel
+    protected $table = 'transaksis';
 
     protected $fillable = [
         'user_id',
@@ -23,6 +23,11 @@ class Transaksi extends Model
         'status_pembayaran',
         'status_transaksi',
         'tanggal_transaksi',
+    ];
+
+    // 🔑 INI YANG PENTING (WAJIB ADA)
+    protected $casts = [
+        'tanggal_transaksi' => 'date',
     ];
 
     // Relasi ke user
