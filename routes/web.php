@@ -14,12 +14,13 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Admin\TransaksiController as AdminTransaksiController;
 use App\Http\Controllers\Auth\OwnerAuthController;
 use App\Http\Controllers\Admin\KaryawanController;
-use App\Http\Controllers\Owner\OwnerDashboardController;
+use App\Http\Controllers\Owner\DashboardController;
 use App\Http\Controllers\Owner\OwnerLaporanController;
 use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;           
 use App\Http\Controllers\Karyawan\KaryawanTransaksiController;
 use App\Http\Controllers\Pelanggan\PelangganDashboardController;
-use App\Http\Controllers\pelanggan\pelangganTransaksiController;
+use App\Http\Controllers\pelanggan\PelangganTransaksiController;
+use App\Http\Controllers\Pelanggan\ProfilController;
 
 
 
@@ -133,10 +134,11 @@ Route::middleware(['auth', 'role:owner'])
     ->name('owner.')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-            return view('owner.dashboard');
-        })->name('dashboard');
+        // DASHBOARD OWNER
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
 
+        // LAPORAN OWNER
         Route::get('/laporan', [OwnerLaporanController::class, 'index'])
             ->name('laporan');
 });
@@ -159,6 +161,10 @@ Route::middleware(['auth', 'role:owner'])
         // Custom route untuk "pickup" (sesuaikan dengan method di controller)
         Route::get('transaksi/{id}/pickup', [KaryawanTransaksiController::class, 'pickup'])
             ->name('transaksi.pickup');
+
+         // ✅ CETAK INVOICE
+        Route::get('transaksi/{id}/invoice', [KaryawanTransaksiController::class, 'invoice'])
+            ->name('transaksi.invoice');
     });
 
 
@@ -168,16 +174,25 @@ Route::middleware(['auth', 'role:owner'])
     ->name('pelanggan.')
     ->group(function () {
 
-    Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
-        ->name('dashboard');
+        // ===== DASHBOARD =====
+        Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
+            ->name('dashboard');
 
-    Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');
-    Route::put('/profile', [UserProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])->name('profile.password.update');
+          Route::get('/profile', [ProfilController::class, 'index'])
+            ->name('profile');
 
-    Route::resource('transaksi', UserTransaksiController::class);
+        Route::put('/profile', [ProfilController::class, 'update'])
+            ->name('profile.update');
+
+        // ===== TRANSAKSI =====
+        Route::resource('transaksi', PelangganTransaksiController::class);
+
+        Route::post('transaksi/{id}/pickup', [PelangganTransaksiController::class, 'pickup'])
+            ->name('transaksi.pickup');
 });
 
 
     //     Route::resource('transaksi', KaryawanTransaksiController::class);
     // });
+
+    

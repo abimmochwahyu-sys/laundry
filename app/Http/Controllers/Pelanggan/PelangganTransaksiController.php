@@ -5,50 +5,90 @@ namespace App\Http\Controllers\Pelanggan;
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Layanan;
-use App\Models\MetodePembayaran;
 use Illuminate\Http\Request;
 
 class PelangganTransaksiController extends Controller
 {
     public function index()
     {
-        $transaksi = Transaksi::where('user_id', auth()->id())
+        $transaksis = Transaksi::with(['layanan'])
+            ->where('user_id', auth()->id())
             ->latest()
-            ->get();
+            ->paginate(10);
 
-        return view('pelanggan.transaksi.index', compact('transaksi'));
+        return view('pelanggan.transaksi.index', compact('transaksis'));
     }
 
     public function create()
     {
-        return view('pelanggan.transaksi.create', [
-            'layanans' => Layanan::all(),
-            'metodePembayarans' => MetodePembayaran::all()
-        ]);
+        $layanans = Layanan::all();
+        return view('pelanggan.transaksi.create', compact('layanans'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'layanan_id' => 'required|exists:layanans,id',
-            'metode_pembayaran_id' => 'required|exists:metode_pembayarans,id',
-            'berat_kg' => 'required|numeric|min:1',
+            'berat' => 'required|numeric|min:0.1',
+            'metode_pembayaran' => 'required|in:cash,e-wallet',
         ]);
 
         $layanan = Layanan::findOrFail($request->layanan_id);
+        $berat = $request->berat;
+        $subtotal = $layanan->harga * $berat;
+
+        // Hitung diskon jika berat > 4kg (3%)
+        $diskon = 0;
+        if ($berat > 4) {
+            $diskon = $subtotal * 0.03;
+        }
+
+        $totalAkhir = $subtotal - $diskon;
+
+        // Generate kode transaksi unik
+        $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . rand(1000, 9999);
 
         Transaksi::create([
-            'kode_transaksi' => 'TRX-' . time(),
-            'user_id' => auth()->id(), // karyawan
-            'layanan_id' => $layanan->id,
-            'metode_pembayaran_id' => $request->metode_pembayaran_id,
-            'berat_kg' => $request->berat_kg,
-            'harga_per_kg' => $layanan->harga_per_kg,
-            'total_harga' => $layanan->harga_per_kg * $request->berat_kg,
-            'status' => 'pending',
+            'user_id' => auth()->id(),
+            'layanan_id' => $request->layanan_id,
+            'kode_transaksi' => $kodeTransaksi,
+            'berat' => $berat,
+            'total_harga' => $subtotal,
+            'diskon' => $diskon,
+            'total_akhir' => $totalAkhir,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'status_pembayaran' => 'pending',
+            'status_transaksi' => 'pending',
+            'tanggal_transaksi' => now(),
         ]);
 
-        return redirect()->route('Pelanggan.transaksi.index')
+        return redirect()
+            ->route('pelanggan.transaksi.index')
             ->with('success', 'Transaksi berhasil dibuat');
+    }
+
+    public function show($id)
+    {
+        $transaksi = Transaksi::with(['layanan'])
+            ->where('user_id', auth()->id())
+            ->findOrFail($id)
+            ->fresh();
+
+        return view('pelanggan.transaksi.show', compact('transaksi'));
+    }
+
+    public function pickup($id)
+    {
+        $transaksi = Transaksi::where('user_id', auth()->id())->findOrFail($id);
+
+        if ($transaksi->status_transaksi != 'selesai') {
+            return redirect()->back()->with('error', 'Transaksi belum selesai');
+        }
+
+        $transaksi->update(['status_transaksi' => 'diambil']);
+
+        return redirect()
+            ->route('pelanggan.transaksi.index')
+            ->with('success', 'Terima kasih, laundry Anda telah diambil');
     }
 }
