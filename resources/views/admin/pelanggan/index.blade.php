@@ -2,7 +2,7 @@
 @section('title', 'Data Pelanggan')
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Data Pelanggan</h1>
-    <a href="{{ route('admin.pelanggan.create') }}" class="btn btn-primary mb-3">+ Tambah Pelanggan</a>
+    <!-- <a href="{{ route('admin.pelanggan.create') }}" class="btn btn-primary mb-3">+ Tambah Pelanggan</a> -->
     <div class="card shadow">
         <div class="card-body">
             <table class="table table-bordered">
