@@ -154,15 +154,24 @@
                 <div class="card-body">
                     <h6 class="text-uppercase text-muted mb-3">Quick Action</h6>
 
-                    <a href="{{ route('admin.transaksi.index') }}"
+                    <a href="{{ route('admin.karyawan.index') }}"
                        class="btn btn-warning btn-sm mb-2">
-                        <i class="fas fa-receipt"></i> Kelola Transaksi
+                        <i class="fas fa-receipt"></i> Daftar Karyawan
+                    </a>
+                    <a href="{{ route('admin.pelanggan.index') }}"
+                       class="btn btn-primary btn-sm mb-2">
+                        <i class="fas fa-receipt"></i> Daftar Pelanggan
+                    </a>
+                    <br>
+                    <a href="{{ route('admin.layanan.index') }}"
+                       class="btn btn-success btn-sm mb-2">
+                        <i class="fas fa-receipt"></i> Kelola Layanan
                     </a>
 
-                    <br>
+                    {{-- <br> --}}
 
                     <a href="{{ route('admin.laporan.index') }}"
-                       class="btn btn-dark btn-sm">
+                       class="btn btn-dark btn-sm mb-2">
                         <i class="fas fa-file-alt"></i> Lihat Laporan
                     </a>
                 </div>

@@ -22,6 +22,7 @@ use App\Http\Controllers\Pelanggan\PelangganDashboardController;
 use App\Http\Controllers\pelanggan\PelangganTransaksiController;
 use App\Http\Controllers\Pelanggan\ProfilController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 
 
 
@@ -96,6 +97,18 @@ Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::cla
 // ✅ TAMBAHAN INVOICE
 Route::get('/laporan/invoice/{id}', [App\Http\Controllers\Admin\LaporanController::class, 'invoice'])
     ->name('laporan.invoice');
+
+    
+        // ===== DASHBOARD ADMIN =====
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // ===== PROFILE ADMIN =====
+        Route::get('/profile', [AdminProfileController::class, 'index'])
+            ->name('profile.index');
+
+        Route::put('/profile', [AdminProfileController::class, 'update'])
+            ->name('profile.update');
 
 });
 
