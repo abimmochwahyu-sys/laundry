@@ -15,6 +15,7 @@ class User extends Authenticatable
     'email',
     'password',
     'role',
+    'photo', 
 ];
 
     protected $hidden = [
@@ -37,5 +38,6 @@ public function karyawan()
 {
     return $this->hasOne(Karyawan::class);
 }
+
 
 }

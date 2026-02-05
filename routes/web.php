@@ -198,3 +198,23 @@ Route::middleware(['auth', 'role:owner'])
 
     //     Route::resource('transaksi', KaryawanTransaksiController::class);
     // });
+
+
+use App\Http\Controllers\Admin\ProfileController;
+
+Route::middleware(['auth'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // ===== DASHBOARD ADMIN =====
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // ===== PROFILE ADMIN =====
+        Route::get('/profile', [ProfileController::class, 'index'])
+            ->name('profile.index');
+
+        Route::put('/profile', [ProfileController::class, 'update'])
+            ->name('profile.update');
+    });
