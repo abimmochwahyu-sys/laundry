@@ -188,14 +188,22 @@ Route::middleware(['auth', 'role:owner'])
         Route::put('transaksi/{id}/status', [KaryawanTransaksiController::class, 'updateStatus'])
             ->name('transaksi.updateStatus');
 
-        // Custom route untuk "pickup" (sesuaikan dengan method di controller)
+        // Custom route untuk "pickup"
         Route::get('transaksi/{id}/pickup', [KaryawanTransaksiController::class, 'pickup'])
             ->name('transaksi.pickup');
 
-         // ✅ CETAK INVOICE
+        // CETAK INVOICE
         Route::get('transaksi/{id}/invoice', [KaryawanTransaksiController::class, 'invoice'])
             ->name('transaksi.invoice');
+
+        // Konfirmasi pembayaran
+        Route::post('transaksi/{id}/payment', [KaryawanTransaksiController::class, 'confirmPayment'])
+            ->name('transaksi.payment');
+
+        Route::put('/transaksi/{id}/lunas', [App\Http\Controllers\Karyawan\KaryawanTransaksiController::class, 'markAsLunas'])
+        ->name('transaksi.lunas');
     });
+
 
 
 

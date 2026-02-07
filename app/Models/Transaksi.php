@@ -11,6 +11,9 @@ class Transaksi extends Model
 
     protected $table = 'transaksis';
 
+    /**
+     * Field yang boleh diisi mass assignment
+     */
     protected $fillable = [
         'user_id',
         'layanan_id',
@@ -23,22 +26,60 @@ class Transaksi extends Model
         'status_pembayaran',
         'status_transaksi',
         'tanggal_transaksi',
+        // optional untuk Midtrans
+        'snap_token',
+        'payment_type',
     ];
 
-    // 🔑 INI YANG PENTING (WAJIB ADA)
+    /**
+     * Casting tipe data
+     */
     protected $casts = [
-        'tanggal_transaksi' => 'date',
+        'tanggal_transaksi' => 'datetime',
+        'total_harga'       => 'integer',
+        'diskon'            => 'integer',
+        'total_akhir'       => 'integer',
     ];
 
-    // Relasi ke user
+    /**
+     * =====================
+     * RELATIONS
+     * =====================
+     */
+
+    // Transaksi milik user (pelanggan)
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    // Relasi ke layanan
+    // Transaksi punya satu layanan
     public function layanan()
     {
-        return $this->belongsTo(\App\Models\Layanan::class, 'layanan_id');
+        return $this->belongsTo(Layanan::class);
+    }
+
+    /**
+     * =====================
+     * MUTATORS / ACCESSORS (opsional)
+     * =====================
+     */
+
+    // total_akhir dengan format rupiah
+    public function getTotalAkhirFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->total_akhir, 0, ',', '.');
+    }
+
+    // diskon dengan format rupiah
+    public function getDiskonFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->diskon, 0, ',', '.');
+    }
+
+    // total_harga dengan format rupiah
+    public function getTotalHargaFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
     }
 }

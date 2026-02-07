@@ -59,7 +59,8 @@
                             </tr>
                             <tr>
                                 <th>Estimasi Selesai</th>
-                                <td>{{ $transaksi->tanggal_selesai ? (is_object($transaksi->tanggal_selesai) ? $transaksi->tanggal_selesai->format('d F Y') : date('d F Y', strtotime($transaksi->tanggal_selesai))) : '-' }}</td>
+                                
+                                <td>{{ $transaksi->layanan->estimasi_waktu }} hari</td>
                             </tr>
                             <tr>
                                 <th>Metode Pembayaran</th>

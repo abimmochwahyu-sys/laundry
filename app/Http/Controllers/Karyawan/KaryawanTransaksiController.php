@@ -4,114 +4,76 @@ namespace App\Http\Controllers\Karyawan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
-use App\Models\Layanan;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class KaryawanTransaksiController extends Controller
 {
-    // Menampilkan daftar transaksi milik user dengan relasi layanan dan paginasi
+    // Tampilkan semua transaksi
     public function index()
     {
-        $transaksis = Transaksi::with('layanan')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
-
+        $transaksis = Transaksi::with(['user', 'layanan'])->latest()->paginate(10);
         return view('karyawan.transaksi.index', compact('transaksis'));
     }
 
-    // Form membuat transaksi baru
-    public function create()
-    {
-        $layanans = Layanan::all();
-        return view('karyawan.transaksi.create', compact('layanans'));
-    }
-
-    // Simpan transaksi baru dengan perhitungan harga dan diskon
-    public function store(Request $request)
-    {
-        $request->validate([
-            'layanan_id' => 'required|exists:layanans,id',
-            'berat' => 'required|numeric|min:0.1',
-            'metode_pembayaran' => 'required|in:cash,e-wallet',
-        ]);
-
-        $layanan = Layanan::findOrFail($request->layanan_id);
-        $berat = $request->berat;
-
-        $subtotal = $layanan->harga * $berat;
-
-        // ✅ DISKON 3% JIKA BERAT > 4 KG
-        $diskon = $berat > 4 ? $subtotal * 0.03 : 0;
-
-        $totalAkhir = $subtotal - $diskon;
-
-        $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . rand(1000, 9999);
-
-        Transaksi::create([
-            'user_id' => auth()->id(),
-            'layanan_id' => $request->layanan_id,
-            'kode_transaksi' => $kodeTransaksi,
-            'berat' => $berat,
-            'total_harga' => $subtotal,
-            'diskon' => $diskon,
-            'total_akhir' => $totalAkhir,
-            'metode_pembayaran' => $request->metode_pembayaran,
-            'status_pembayaran' => 'pending',
-            'status_transaksi' => 'pending',
-            'tanggal_transaksi' => now(),
-        ]);
-
-        return redirect()->route('karyawan.transaksi.index')
-            ->with('success', 'Transaksi berhasil dibuat');
-    }
-
-    // Detail transaksi milik user
+    // Tampilkan detail transaksi
     public function show($id)
     {
-        $transaksi = Transaksi::with('layanan')
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
+        $transaksi = Transaksi::with(['user', 'layanan'])->findOrFail($id);
+
+        // Jika tanggal_selesai kosong, hitung otomatis dari tanggal_transaksi + estimasi_hari
+        if (!$transaksi->tanggal_selesai && $transaksi->layanan->estimasi_hari) {
+            $transaksi->tanggal_selesai = Carbon::parse($transaksi->tanggal_transaksi)
+                ->addDays($transaksi->layanan->estimasi_hari);
+            $transaksi->save();
+        }
 
         return view('karyawan.transaksi.show', compact('transaksi'));
     }
 
-    // 🔥 CETAK INVOICE
-    public function invoice($id)
+    // Form edit transaksi
+    public function edit($id)
     {
-        $transaksi = Transaksi::with('layanan')
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        return view('karyawan.transaksi.invoice', compact('transaksi'));
+        $transaksi = Transaksi::with(['user', 'layanan'])->findOrFail($id);
+        return view('karyawan.transaksi.edit', compact('transaksi'));
     }
 
-    // Pickup laundry, ubah status transaksi jadi diambil jika status sebelumnya selesai
-    public function pickup($id)
+    // Update transaksi (status / tanggal selesai)
+    public function update(Request $request, $id)
     {
-        $transaksi = Transaksi::where('user_id', auth()->id())->findOrFail($id);
+        $transaksi = Transaksi::findOrFail($id);
 
-        if ($transaksi->status_transaksi != 'selesai') {
-            return redirect()->back()->with('error', 'Transaksi belum selesai');
-        }
-
-        $transaksi->update(['status_transaksi' => 'diambil']);
-
-        return redirect()->route('karyawan.transaksi.index')
-            ->with('success', 'Terima kasih, laundry Anda telah diambil');
-    }
-
-    // Update status transaksi dari form
-    public function updateStatus(Request $request, $id)
-    {
         $request->validate([
-            'status_transaksi' => 'required|in:pending,selesai,diambil',
+            'status_transaksi' => 'required|in:pending,proses,selesai,diambil',
+            'status_pembayaran' => 'required|in:pending,lunas',
+            'tanggal_selesai' => 'nullable|date',
         ]);
 
-        $transaksi = Transaksi::where('user_id', auth()->id())->findOrFail($id);
-        $transaksi->status_transaksi = $request->status_transaksi;
+        $transaksi->update([
+            'status_transaksi' => $request->status_transaksi,
+            'status_pembayaran' => $request->status_pembayaran,
+            'tanggal_selesai' => $request->tanggal_selesai,
+        ]);
+
+        return redirect()->route('karyawan.transaksi.index')
+            ->with('success', 'Transaksi berhasil diperbarui');
+    }
+
+    // Tandai pembayaran sebagai lunas / konfirmasi pembayaran
+    public function confirmPayment($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        $transaksi->status_pembayaran = 'lunas';
         $transaksi->save();
 
-        return redirect()->back()->with('success', 'Status transaksi berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Status pembayaran berhasil dikonfirmasi LUNAS.');
+    }
+
+    // Tampilkan invoice
+    public function invoice($id)
+    {
+        $transaksi = Transaksi::with(['user', 'layanan'])->findOrFail($id);
+        return view('karyawan.transaksi.invoice', compact('transaksi'));
     }
 }
