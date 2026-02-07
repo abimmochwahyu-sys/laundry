@@ -7,12 +7,9 @@
 {{-- Header --}}
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 text-gray-800 mb-0">Laporan Pendapatan</h1>
-    <span class="badge badge-success px-3 py-2 shadow-sm">
-        Laporan Owner
-    </span>
 </div>
 
-{{-- Ringkasan Laporan --}}
+<!-- {{-- Ringkasan Laporan --}}
 <div class="row mb-4">
 
     {{-- Total Transaksi --}}
@@ -76,9 +73,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-</div>
+<!-- </div> -->
 
 {{-- Tabel Laporan --}}
 <div class="card shadow-lg border-0 mb-4">
