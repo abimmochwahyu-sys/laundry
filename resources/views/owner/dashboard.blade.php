@@ -7,9 +7,6 @@
 {{-- Header --}}
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 text-gray-800 mb-0">Dashboard Owner</h1>
-    <span class="badge badge-primary px-3 py-2 shadow-sm">
-        SICLEAN Laundry System
-    </span>
 </div>
 
 {{-- Hero / Welcome --}}
