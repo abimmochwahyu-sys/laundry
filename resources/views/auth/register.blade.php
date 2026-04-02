@@ -269,7 +269,7 @@
             display: block;
         }
 
-        
+
         .password-group {
             position: relative;
         }
@@ -327,11 +327,8 @@
 
                 <div class="form-group">
                     <i class="fas fa-user form-icon"></i>
-                    <input type="text"
-                        class="form-control @error('name') is-invalid @enderror"
-                        name="name"
-                        placeholder="Nama Lengkap"
-                        required>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name"
+                        placeholder="Nama Lengkap" required>
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -339,12 +336,29 @@
 
                 <div class="form-group">
                     <i class="fas fa-envelope form-icon"></i>
-                    <input type="email"
-                        class="form-control @error('email') is-invalid @enderror"
-                        name="email"
-                        placeholder="Email"
-                        required>
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" name="email"
+                        placeholder="Email" required>
                     @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-map-marker-alt form-icon"></i>
+                    <input type="text" class="form-control @error('alamat') is-invalid @enderror" name="alamat"
+                        placeholder="Alamat Lengkap" required>
+
+                    @error('alamat')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-phone form-icon"></i>
+                    <input type="text" class="form-control @error('telepon') is-invalid @enderror" name="telepon"
+                        placeholder="No Telepon" required>
+
+                    @error('telepon')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -352,12 +366,8 @@
                 <!-- Password -->
                 <div class="form-group password-group">
                     <i class="fas fa-lock form-icon"></i>
-                    <input type="password"
-                        class="form-control @error('password') is-invalid @enderror"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                        required>
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder="Password" required>
 
                     <i class="fas fa-eye toggle-password" id="togglePassword"></i>
 
@@ -369,12 +379,8 @@
                 <!-- Password Confirmation -->
                 <div class="form-group password-group">
                     <i class="fas fa-lock form-icon"></i>
-                    <input type="password"
-                        class="form-control"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        placeholder="Konfirmasi Password"
-                        required>
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                        placeholder="Konfirmasi Password" required>
 
                     <i class="fas fa-eye toggle-password" id="togglePasswordConfirm"></i>
                 </div>
@@ -397,7 +403,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             /* Smooth background */
             setTimeout(() => {
@@ -407,7 +413,7 @@
             /* Prevent double submit */
             const form = document.getElementById('registerForm');
             if (form) {
-                form.addEventListener('submit', function () {
+                form.addEventListener('submit', function() {
                     this.classList.add('loading');
                     const btn = this.querySelector('button[type="submit"]');
                     if (btn) btn.disabled = true;
@@ -417,11 +423,11 @@
             /* Toggle password helper */
             function togglePassword(toggleId, inputId) {
                 const toggle = document.getElementById(toggleId);
-                const input  = document.getElementById(inputId);
+                const input = document.getElementById(inputId);
 
                 if (!toggle || !input) return;
 
-                toggle.addEventListener('click', function () {
+                toggle.addEventListener('click', function() {
                     input.type = input.type === 'password' ? 'text' : 'password';
                     this.classList.toggle('fa-eye');
                     this.classList.toggle('fa-eye-slash');

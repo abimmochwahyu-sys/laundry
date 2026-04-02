@@ -26,14 +26,15 @@
                             <td>{{ $p->telepon }}</td>
 
                             <td>
-                                <a href="{{ route('admin.pelanggan.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>
-
                                 <form action="{{ route('admin.pelanggan.destroy', $p->id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
+
                                     <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Yakin ingin hapus?')">Delete</button>
+                                        onclick="return confirm('Yakin ingin hapus?')">
+                                        Delete
+                                    </button>
                                 </form>
                             </td>
                         </tr>

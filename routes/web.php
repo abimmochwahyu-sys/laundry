@@ -23,6 +23,8 @@ use App\Http\Controllers\pelanggan\PelangganTransaksiController;
 use App\Http\Controllers\Pelanggan\ProfilController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Karyawan\AbsensiController;
+use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
 
 
 
@@ -233,4 +235,23 @@ Route::middleware(['auth', 'role:owner'])
     //     Route::resource('transaksi', KaryawanTransaksiController::class);
     // });
 
+
     
+Route::middleware(['auth'])->prefix('karyawan')->name('karyawan.')->group(function () {
+
+    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+
+    Route::post('/absen-masuk', [AbsensiController::class, 'absenMasuk'])->name('absen.masuk');
+
+    Route::post('/absen-keluar', [AbsensiController::class, 'absenKeluar'])->name('absen.keluar');
+
+});
+    
+
+
+Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
+
+    Route::get('/absensi', [AdminAbsensiController::class, 'index'])
+        ->name('absensi.index');
+
+});

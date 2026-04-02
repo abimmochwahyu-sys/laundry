@@ -17,46 +17,47 @@ class RegisterController extends Controller
     }
 
     public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ], [
-            'email.unique' => 'Email sudah terdaftar!',
-            'password.min' => 'Password minimal 6 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6|confirmed',
+        'alamat' => 'required|string',
+        'telepon' => 'required|string|max:20',
+    ], [
+        'email.unique' => 'Email sudah terdaftar!',
+        'password.min' => 'Password minimal 6 karakter.',
+        'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    ]);
 
-        try {
-            return DB::transaction(function () use ($validated) {
-                // 1. Buat User
-                $user = User::create([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'password' => Hash::make($validated['password']),
-                    'role' => 'pelanggan',
-                ]);
+    try {
+        return DB::transaction(function () use ($validated) {
 
-                // 2. Buat Data Pelanggan
-                Pelanggan::create([
-                    'user_id' => $user->id,
-                    'telepon' => "-", // Pastikan kolom ini ada di database
-                    'alamat'  => "-",  // Pastikan kolom ini ada di database
-                ]);
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'pelanggan',
+            ]);
 
-                return redirect()
-                    ->route('login')
-                    ->with('success', 'Akun berhasil didaftarkan. Silahkan login.');
-            });
+            Pelanggan::create([
+                'user_id' => $user->id,
+                'telepon' => $validated['telepon'],
+                'alamat'  => $validated['alamat'],
+            ]);
 
-        } catch (\Throwable $th) {
-            // Jika gagal, log errornya di storage/logs/laravel.log
-            \Log::error("Registrasi Gagal: " . $th->getMessage());
+            return redirect()
+                ->route('login')
+                ->with('success', 'Akun berhasil didaftarkan. Silahkan login.');
+        });
 
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'Gagal daftar: ' . $th->getMessage()]);
-        }
+    } catch (\Throwable $th) {
+
+        \Log::error("Registrasi Gagal: " . $th->getMessage());
+
+        return back()
+            ->withInput()
+            ->withErrors(['email' => 'Gagal daftar']);
     }
+}
 }

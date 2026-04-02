@@ -2,7 +2,7 @@
 
     {{-- BRAND --}}
     <a class="sidebar-brand d-flex align-items-center justify-content-center"
-       href="{{ auth()->user()->role === 'owner' ? route('owner.dashboard') : route('admin.dashboard') }}">
+        href="{{ auth()->user()->role === 'owner' ? route('owner.dashboard') : route('admin.dashboard') }}">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
@@ -14,8 +14,7 @@
     <hr class="sidebar-divider my-0">
 
     {{-- ================= ADMIN SIDEBAR ================= --}}
-    @if(auth()->user()->role === 'admin')
-
+    @if (auth()->user()->role === 'admin')
         <li class="nav-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.dashboard') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -33,7 +32,7 @@
                 <span>Karyawan</span>
             </a>
         </li>
-        
+
         <li class="nav-item {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.pelanggan.index') }}">
                 <i class="fas fa-users"></i>
@@ -55,6 +54,12 @@
                 <span>Kelola Transaksi</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.absensi.index') }}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Absensi</span>
+            </a>
+        </li>
 
         <hr class="sidebar-divider">
 
@@ -67,9 +72,8 @@
             </a>
         </li>
 
-    {{-- ================= OWNER SIDEBAR ================= --}}
+        {{-- ================= OWNER SIDEBAR ================= --}}
     @elseif(auth()->user()->role === 'owner')
-
         <li class="nav-item {{ request()->is('owner/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('owner.dashboard') }}">
                 <i class="fas fa-fw fa-chart-line"></i>
@@ -87,10 +91,7 @@
                 <span>Laporan Pendapatan</span>
             </a>
         </li>
-
-    
     @elseif(auth()->user()->role === 'karyawan')
-        
         <li class="nav-item {{ request()->is('karyawan/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('karyawan.dashboard') }}">
                 <i class="fas fa-fw fa-chart-line"></i>
@@ -105,8 +106,13 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('karyawan/absensi') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('karyawan.absensi.index') }}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Absensi</span>
+            </a>
+        </li>
     @elseif(auth()->user()->role === 'pelanggan')
-        
         <li class="nav-item {{ request()->is('pelanggan/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pelanggan.dashboard') }}">
                 <i class="fas fa-fw fa-chart-line"></i>
