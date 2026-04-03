@@ -31,28 +31,38 @@
                                     </label>
                                     <select class="form-control @error('status_transaksi') is-invalid @enderror"
                                         id="status_transaksi" name="status_transaksi" required>
-                                        <option value="pending" {{ $transaksi->status_transaksi == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="proses" {{ $transaksi->status_transaksi == 'proses' ? 'selected' : '' }}>Proses</option>
-                                        <option value="selesai" {{ $transaksi->status_transaksi == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                        <option value="diambil" {{ $transaksi->status_transaksi == 'diambil' ? 'selected' : '' }}>Diambil</option>
+                                        <option value="pending"
+                                            {{ $transaksi->status_transaksi == 'pending' ? 'selected' : '' }}>Pending
+                                        </option>
+                                        <option value="proses"
+                                            {{ $transaksi->status_transaksi == 'proses' ? 'selected' : '' }}>Proses</option>
+                                        <option value="selesai"
+                                            {{ $transaksi->status_transaksi == 'selesai' ? 'selected' : '' }}>Selesai
+                                        </option>
+                                        <option value="diambil"
+                                            {{ $transaksi->status_transaksi == 'diambil' ? 'selected' : '' }}>Diambil
+                                        </option>
                                     </select>
                                     @error('status_transaksi')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-<div class="col-md-6 mb-3">
-    <label for="status_pembayaran" class="form-label font-weight-bold">
-        <i class="fas fa-money-bill-wave mr-1 text-primary"></i> Status Pembayaran
-    </label>
-    <select class="form-control @error('status_pembayaran') is-invalid @enderror" 
-        id="status_pembayaran" name="status_pembayaran" required>
-        <option value="pending" {{ $transaksi->status_pembayaran == 'pending' ? 'selected' : '' }}>Pending</option>
-        <option value="lunas" {{ $transaksi->status_pembayaran == 'lunas' ? 'selected' : '' }}>Lunas</option>
-    </select>
-    @error('status_pembayaran')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="status_pembayaran" class="form-label font-weight-bold">
+                                        <i class="fas fa-money-bill-wave mr-1 text-primary"></i> Status Pembayaran
+                                    </label>
+                                    <select class="form-control @error('status_pembayaran') is-invalid @enderror"
+                                        id="status_pembayaran" name="status_pembayaran" required>
+                                        <option value="pending"
+                                            {{ $transaksi->status_pembayaran == 'pending' ? 'selected' : '' }}>Pending
+                                        </option>
+                                        <option value="lunas"
+                                            {{ $transaksi->status_pembayaran == 'lunas' ? 'selected' : '' }}>Lunas</option>
+                                    </select>
+                                    @error('status_pembayaran')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="row">
@@ -60,7 +70,8 @@
                                     <label for="tanggal_selesai" class="form-label font-weight-bold">
                                         <i class="fas fa-calendar-check mr-1 text-primary"></i> Tanggal Selesai
                                     </label>
-                                    <input type="date" class="form-control @error('tanggal_selesai') is-invalid @enderror"
+                                    <input type="date"
+                                        class="form-control @error('tanggal_selesai') is-invalid @enderror"
                                         id="tanggal_selesai" name="tanggal_selesai"
                                         value="{{ is_object($transaksi->tanggal_selesai) ? $transaksi->tanggal_selesai->format('Y-m-d') : date('Y-m-d', strtotime($transaksi->tanggal_selesai)) }}">
                                     @error('tanggal_selesai')
@@ -137,7 +148,7 @@
                                 <td>Subtotal</td>
                                 <td class="text-right">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                             </tr>
-                            @if($transaksi->diskon > 0)
+                            @if ($transaksi->diskon > 0)
                                 <tr>
                                     <td>Diskon</td>
                                     <td class="text-right text-success">- Rp

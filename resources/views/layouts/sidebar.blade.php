@@ -56,8 +56,14 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.absensi.index') }}">
-                <i class="fas fa-fw fa-user"></i>
+                <i class="fas fa-fw fa-fingerprint"></i>
                 <span>Absensi</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.setting.absensi') }}">
+                <i class="fas fa-fw fa-clock"></i>
+                <span>Pengaturan Jam</span>
             </a>
         </li>
 
@@ -108,7 +114,7 @@
 
         <li class="nav-item {{ request()->is('karyawan/absensi') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('karyawan.absensi.index') }}">
-                <i class="fas fa-fw fa-user"></i>
+                <i class="fas fa-fw fa-fingerprint"></i>
                 <span>Absensi</span>
             </a>
         </li>

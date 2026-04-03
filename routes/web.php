@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Karyawan\AbsensiController;
 use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
+use App\Http\Controllers\Admin\SettingAbsensiController;
 
 
 
@@ -237,21 +238,33 @@ Route::middleware(['auth', 'role:owner'])
 
 
     
-Route::middleware(['auth'])->prefix('karyawan')->name('karyawan.')->group(function () {
+Route::prefix('karyawan')->middleware(['auth'])->group(function () {
 
-    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::get('/absensi', [AbsensiController::class, 'index'])->name('karyawan.absensi.index');
 
-    Route::post('/absen-masuk', [AbsensiController::class, 'absenMasuk'])->name('absen.masuk');
-
-    Route::post('/absen-keluar', [AbsensiController::class, 'absenKeluar'])->name('absen.keluar');
+    // scan qr absensi
+    Route::get('/absen/scan/{token}', [AbsensiController::class, 'scan'])->name('karyawan.absen.scan');
 
 });
     
 
 
-Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
 
-    Route::get('/absensi', [AdminAbsensiController::class, 'index'])
-        ->name('absensi.index');
+    Route::get('/absensi', [AdminAbsensiController::class, 'index'])->name('admin.absensi.index');
+
+    // scan qr karyawan
+    Route::get('/scan-absensi/{userId}', [AdminAbsensiController::class, 'scan'])->name('admin.absen.scan');
+
+});
+
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+
+    Route::get('/setting-absensi',[SettingAbsensiController::class,'index'])
+        ->name('admin.setting.absensi');
+
+    Route::post('/setting-absensi/update',[SettingAbsensiController::class,'update'])
+        ->name('admin.setting.absensi.update');
 
 });
