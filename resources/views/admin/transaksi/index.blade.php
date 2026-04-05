@@ -50,27 +50,25 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            @if($transaksi->status_pembayaran == 'pending')
-                                                                <form action="{{ route('admin.transaksi.lunas', $transaksi->id) }}" method="POST"
+                                                            @if($transaksi->status_pembayaran === 'lunas')
+                                                                <form action="{{ route('admin.transaksi.destroy', $transaksi->id) }}" method="POST"
                                                                     style="display:inline;">
                                                                     @csrf
-                                                                    @method('PUT')
-                                                                    <button type="submit" class="btn btn-success btn-sm"
-                                                                        onclick="return confirm('Ubah status ke LUNAS?')">
-                                                                        <i class="fas fa-check"></i> Tandai Lunas
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                                        onclick="return confirm('Hapus transaksi ini?')">
+                                                                        <i class="fas fa-trash"></i> Hapus
                                                                     </button>
                                                                 </form>
                                                             @else
-                                                                <!-- <span class="badge bg-success text-white">LUNAS</span> -->
+                                                                <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                                    <i class="fas fa-ban"></i> Bayar dulu
+                                                                </button>
                                                             @endif
 
-                                                            <a href="{{ route('admin.transaksi.show', $transaksi->id) }}"
-                                                                class="btn btn-info btn-sm">
-                                                                <i class="fas fa-eye"></i>
-                                                            </a>
-                                                            <a href="{{ route('admin.transaksi.edit', $transaksi->id) }}"
-                                                                class="btn btn-warning btn-sm">
-                                                                <i class="fas fa-edit"></i>
+                                                            <a href="{{ route('admin.laporan.invoice', $transaksi->id) }}"
+                                                                class="btn btn-primary btn-sm">
+                                                                <i class="fas fa-file-invoice"></i> Invoice
                                                             </a>
                                                         </td>
                                                     </tr>

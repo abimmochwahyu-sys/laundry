@@ -27,12 +27,14 @@ class TransaksiController extends Controller
     }
     
     // Di app/Http/Controllers/Admin/TransaksiController.php
+// ⚠️ IMPORTANT: Admin also cannot set 'diambil' status directly
+// 'diambil' status hanya bisa di-set oleh customer via pickup confirmation
 public function update(Request $request, $id)
 {
     $transaksi = Transaksi::findOrFail($id);
 
     $request->validate([
-        'status_transaksi' => 'required|in:pending,proses,selesai,diambil',
+        'status_transaksi' => 'required|in:pending,proses,selesai',
         'status_pembayaran' => 'required|in:pending,lunas',
         'tanggal_selesai' => 'nullable|date',
     ]);
@@ -55,6 +57,20 @@ public function markAsLunas($id)
     $transaksi->save();
 
     return redirect()->back()->with('success', 'Status pembayaran berhasil diubah menjadi LUNAS.');
+}
+
+public function destroy($id)
+{
+    $transaksi = Transaksi::findOrFail($id);
+
+    if ($transaksi->status_pembayaran !== 'lunas') {
+        return redirect()->back()->with('error', 'Transaksi belum lunas. Bayar terlebih dahulu sebelum menghapus.');
+    }
+
+    $transaksi->delete();
+
+    return redirect()->route('admin.transaksi.index')
+        ->with('success', 'Transaksi berhasil dihapus.');
 }
 
 }

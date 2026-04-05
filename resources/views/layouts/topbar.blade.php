@@ -31,12 +31,6 @@
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                     {{ Auth::user()->name }}
                 </span>
-
-                <img class="img-profile rounded-circle"
-                     src="{{ Auth::user()->photo
-                            ? asset('storage/profile/' . Auth::user()->photo)
-                            : asset('sbadmin2/img/undraw_profile.svg') }}"
-                     style="object-fit: cover; width: 32px; height: 32px;">
             </a>
 
 
@@ -44,7 +38,11 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                  aria-labelledby="userDropdown">
 
-                <a class="dropdown-item" href="{{ route('admin.profile.index') }}">
+                <a class="dropdown-item" href="{{ 
+                    Auth::user()->role === 'admin' ? route('admin.profile.index') : 
+                    (Auth::user()->role === 'karyawan' ? route('karyawan.profile') :
+                    (Auth::user()->role === 'owner' ? route('owner.profile') : route('pelanggan.profile')))
+                }}">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profil
                 </a>

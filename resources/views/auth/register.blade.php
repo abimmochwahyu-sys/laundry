@@ -45,9 +45,14 @@
             position: relative;
         }
 
-        .brand-icon {
-            font-size: 5rem;
-            margin-bottom: 1rem;
+        .brand-logo {
+            width: 300px;
+            height: auto;
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+            display: block;
+            background: transparent;
+            padding: 0;
         }
 
         .brand-name {
@@ -307,7 +312,7 @@
     <div class="login-container">
         <!-- Brand Section -->
         <div class="brand-section">
-            <i class="fas fa-soap brand-icon"></i>
+            <img src="{{ asset('sbadmin2/img/logoL2.png') }}" alt="SICLEAN" class="brand-logo">
             <h1 class="brand-name">SICLEAN</h1>
             <p class="brand-tagline">Layanan Laundry Terpercaya</p>
         </div>

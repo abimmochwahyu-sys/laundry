@@ -34,8 +34,11 @@
                                         <option value="pending" {{ $transaksi->status_transaksi == 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="proses" {{ $transaksi->status_transaksi == 'proses' ? 'selected' : '' }}>Proses</option>
                                         <option value="selesai" {{ $transaksi->status_transaksi == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                        <option value="diambil" {{ $transaksi->status_transaksi == 'diambil' ? 'selected' : '' }}>Diambil</option>
+                                        @if($transaksi->status_transaksi == 'diambil')
+                                        <option value="diambil" selected>Diambil (Customer Confirmation)</option>
+                                        @endif
                                     </select>
+                                    <small class="form-text text-muted">Status "Diambil" hanya bisa diisi oleh customer saat mengkonfirmasi pengambilan</small>
                                     @error('status_transaksi')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

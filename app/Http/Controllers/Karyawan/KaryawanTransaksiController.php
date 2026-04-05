@@ -39,12 +39,14 @@ class KaryawanTransaksiController extends Controller
     }
 
     // Update transaksi (status / tanggal selesai)
+    // ⚠️ IMPORTANT: Karyawan hanya bisa set ke pending/proses/selesai
+    // 'diambil' status hanya bisa di-set oleh customer via pickup confirmation
     public function update(Request $request, $id)
     {
         $transaksi = Transaksi::findOrFail($id);
 
         $request->validate([
-            'status_transaksi' => 'required|in:pending,proses,selesai,diambil',
+            'status_transaksi' => 'required|in:pending,proses,selesai',
             'status_pembayaran' => 'required|in:pending,lunas',
             'tanggal_selesai' => 'nullable|date',
         ]);
@@ -59,6 +61,23 @@ class KaryawanTransaksiController extends Controller
             ->with('success', 'Transaksi berhasil diperbarui');
     }
 
+    // Update status transaksi saja
+    // ⚠️ IMPORTANT: Karyawan hanya bisa set ke pending/proses/selesai
+    public function updateStatus(Request $request, $id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        $request->validate([
+            'status_transaksi' => 'required|in:pending,proses,selesai',
+        ]);
+
+        $transaksi->update([
+            'status_transaksi' => $request->status_transaksi,
+        ]);
+
+        return redirect()->back()->with('success', 'Status transaksi berhasil diperbarui');
+    }
+
     // Tandai pembayaran sebagai lunas / konfirmasi pembayaran
     public function confirmPayment($id)
     {
@@ -68,6 +87,17 @@ class KaryawanTransaksiController extends Controller
         $transaksi->save();
 
         return redirect()->back()->with('success', 'Status pembayaran berhasil dikonfirmasi LUNAS.');
+    }
+
+    // Mark transaksi as lunas (untuk route PUT)
+    public function markAsLunas($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        $transaksi->status_pembayaran = 'lunas';
+        $transaksi->save();
+
+        return redirect()->back()->with('success', 'Transaksi berhasil ditandai LUNAS.');
     }
 
     // Tampilkan invoice

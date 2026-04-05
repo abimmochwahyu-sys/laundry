@@ -9,19 +9,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         body {
-            /* Mengubah background menjadi abu-abu muda polos */
-            background-color: #f1f5f9;
+            /* Background sama dengan halaman register */
+            background-color: #f8fafc;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 1s ease;
         }
         
         .login-container {
             width: 100%;
             max-width: 900px;
-            height: 500px;
+            height: 600px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             border-radius: 20px;
             overflow: hidden;
@@ -44,6 +45,16 @@
         .brand-icon {
             font-size: 5rem;
             margin-bottom: 1rem;
+        }
+
+        .brand-logo {
+            width: 300px;
+            height: auto;
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+            display: block;
+            background: transparent;
+            padding: 0;
         }
         
         .brand-name {
@@ -266,7 +277,7 @@
     <div class="login-container">
         <!-- Brand Section -->
         <div class="brand-section">
-            <i class="fas fa-soap brand-icon"></i>
+            <img src="{{ asset('sbadmin2/img/logoL2.png') }}" alt="SICLEAN" class="brand-logo">
             <h1 class="brand-name">SICLEAN</h1>
             <p class="brand-tagline">Layanan Laundry Terpercaya</p>
         </div>
@@ -327,30 +338,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            /* Smooth background */
+            setTimeout(() => {
+                document.body.style.backgroundColor = '#e2e8f0';
+            }, 300);
+
             const loginForm = document.getElementById('loginForm');
-            
-            loginForm.addEventListener('submit', function() {
-                // Show loading animation
-                this.classList.add('loading');
-                
-                // Prevent multiple submissions
-                const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-            });
-            
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    // Show loading animation
+                    this.classList.add('loading');
+
+                    // Prevent multiple submissions
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) submitButton.disabled = true;
+                });
+            }
+
             // Toggle password visibility
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
-            
-            togglePassword.addEventListener('click', function() {
-                // Toggle the type attribute
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                // Toggle the eye icon
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
-            });
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
 </body>

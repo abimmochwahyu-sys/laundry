@@ -14,6 +14,7 @@ return new class extends Migration
     Schema::create('pelanggans', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $table->string('telepon')->nullable();
         $table->text('alamat');
         $table->timestamps();
     });

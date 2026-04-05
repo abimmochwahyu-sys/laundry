@@ -62,66 +62,57 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 | Admin Routes
 |--------------------------------------------------------------------------
 */
-// Admin Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('pelanggan', PelangganController::class);
-    // Dashboard Admin
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-    
-    // Layanan Routes
-    Route::resource('/layanan', App\Http\Controllers\Admin\LayananController::class);
-
-    // Transaksi Routes
-    Route::resource('transaksi', AdminTransaksiController::class);
-    Route::post('transaksi/{id}/payment', [AdminTransaksiController::class, 'confirmPayment'])
-        ->name('transaksi.payment');
-
-    Route::resource('karyawan', KaryawanController::class);
-    
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/karyawan/dashboard', [KaryawanDashboardController::class, 'index'])
-        ->name('karyawan.dashboard');
-
-});
-    // Update status transaksi jadi lunas
-    Route::put('/transaksi/{id}/lunas', [App\Http\Controllers\Admin\TransaksiController::class, 'markAsLunas'])
-        ->name('transaksi.lunas');
-
-    // Laporan Routes
-Route::get('/laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])
-    ->name('laporan.index');
-
-Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'export'])
-    ->name('laporan.export');
-
-// ✅ TAMBAHAN INVOICE
-Route::get('/laporan/invoice/{id}', [App\Http\Controllers\Admin\LaporanController::class, 'invoice'])
-    ->name('laporan.invoice');
-
-    
-        // ===== DASHBOARD ADMIN =====
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
-
-        // ===== PROFILE ADMIN =====
-        Route::get('/profile', [AdminProfileController::class, 'index'])
-            ->name('profile.index');
-
-        Route::put('/profile', [AdminProfileController::class, 'update'])
-            ->name('profile.update');
-
-});
-
-
-Route::middleware(['auth'])
+Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        // Dashboard Admin
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
+
+        // Pelanggan Routes
+        Route::resource('pelanggan', PelangganController::class);
+
+        // Layanan Routes
+        Route::resource('layanan', App\Http\Controllers\Admin\LayananController::class);
+
+        // Transaksi Routes
+        Route::resource('transaksi', AdminTransaksiController::class);
+        Route::post('transaksi/{id}/payment', [AdminTransaksiController::class, 'confirmPayment'])
+            ->name('transaksi.payment');
+        Route::put('transaksi/{id}/lunas', [App\Http\Controllers\Admin\TransaksiController::class, 'markAsLunas'])
+            ->name('transaksi.lunas');
+
+        // Karyawan Routes
+        Route::resource('karyawan', KaryawanController::class);
+
+        // Laporan Routes
+        Route::get('/laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])
+            ->name('laporan.index');
+        Route::get('/laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'export'])
+            ->name('laporan.export');
+        Route::get('/laporan/invoice/{id}', [App\Http\Controllers\Admin\LaporanController::class, 'invoice'])
+            ->name('laporan.invoice');
+
+        // Profile Admin (using unified controller)
+        Route::get('/profile', [UserProfileController::class, 'index'])
+            ->name('profile.index');
+        Route::put('/profile', [UserProfileController::class, 'update'])
+            ->name('profile.update');
+        Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])
+            ->name('profile.password.update');
+
+        // Absensi Routes
+        Route::get('/absensi', [AdminAbsensiController::class, 'index'])
+            ->name('absensi.index');
+        Route::get('/scan-absensi/{userId}', [AdminAbsensiController::class, 'scan'])
+            ->name('absen.scan');
+
+        // Setting Absensi
+        Route::get('/setting-absensi', [SettingAbsensiController::class, 'index'])
+            ->name('setting.absensi');
+        Route::post('/setting-absensi/update', [SettingAbsensiController::class, 'update'])
+            ->name('setting.absensi.update');
     });
 
 
@@ -130,20 +121,6 @@ Route::middleware(['auth'])
 | User/Pelanggan Routes
 |--------------------------------------------------------------------------
 */
-// User Routes
-Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
-    // Dashboard User
-    Route::get('/dashboard', function () {
-        return view('pelanggan.dashboard');
-    })->name('dashboard');
-    // Tambahkan route untuk profil user
-    Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');
-    Route::put('/profile', [UserProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])->name('profile.password.update');
-    Route::resource('transaksi', UserTransaksiController::class);
-    Route::post('transaksi/{id}/pickup', [UserTransaksiController::class, 'pickup'])
-        ->name('transaksi.pickup');
-});
 
 // Route::prefix('owner')->group(function () {
 
@@ -174,6 +151,14 @@ Route::middleware(['auth', 'role:owner'])
         // LAPORAN OWNER
         Route::get('/laporan', [OwnerLaporanController::class, 'index'])
             ->name('laporan');
+        
+        // PROFILE OWNER
+        Route::get('/profile', [UserProfileController::class, 'index'])
+            ->name('profile');
+        Route::put('/profile', [UserProfileController::class, 'update'])
+            ->name('profile.update');
+        Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])
+            ->name('profile.password.update');
 });
 
 
@@ -183,6 +168,14 @@ Route::middleware(['auth', 'role:owner'])
     ->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Karyawan\DashboardController::class, 'index'])
             ->name('dashboard');
+        
+        // PROFILE KARYAWAN
+        Route::get('/profile', [UserProfileController::class, 'index'])
+            ->name('profile');
+        Route::put('/profile', [UserProfileController::class, 'update'])
+            ->name('profile.update');
+        Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])
+            ->name('profile.password.update');
 
         // Resource transaksi
         Route::resource('transaksi', KaryawanTransaksiController::class);
@@ -219,11 +212,13 @@ Route::middleware(['auth', 'role:owner'])
         Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
             ->name('dashboard');
 
-          Route::get('/profile', [ProfilController::class, 'index'])
+        // PROFILE PELANGGAN (using unified controller)
+        Route::get('/profile', [UserProfileController::class, 'index'])
             ->name('profile');
-
-        Route::put('/profile', [ProfilController::class, 'update'])
+        Route::put('/profile', [UserProfileController::class, 'update'])
             ->name('profile.update');
+        Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])
+            ->name('profile.password.update');
 
         // ===== TRANSAKSI =====
         Route::resource('transaksi', PelangganTransaksiController::class);

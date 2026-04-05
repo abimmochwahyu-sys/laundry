@@ -54,10 +54,11 @@ class RegisterController extends Controller
     } catch (\Throwable $th) {
 
         \Log::error("Registrasi Gagal: " . $th->getMessage());
+        \Log::error("Stack trace: " . $th->getTraceAsString());
 
         return back()
             ->withInput()
-            ->withErrors(['email' => 'Gagal daftar']);
+            ->withErrors(['email' => 'Gagal daftar: ' . $th->getMessage()]);
     }
 }
 }

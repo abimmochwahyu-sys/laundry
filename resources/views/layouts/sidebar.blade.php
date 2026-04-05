@@ -3,8 +3,8 @@
     {{-- BRAND --}}
     <a class="sidebar-brand d-flex align-items-center justify-content-center"
         href="{{ auth()->user()->role === 'owner' ? route('owner.dashboard') : route('admin.dashboard') }}">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+        <div class="sidebar-brand-icon">
+            <img src="{{ asset('sbadmin2/img/logoL2.png') }}" alt="SICLEAN" style="width: 60px; height: auto;">
         </div>
         <div class="sidebar-brand-text mx-3 mt-2">
             <h4><b>SICLEAN</b></h4>
@@ -78,6 +78,8 @@
             </a>
         </li>
 
+       
+
         {{-- ================= OWNER SIDEBAR ================= --}}
     @elseif(auth()->user()->role === 'owner')
         <li class="nav-item {{ request()->is('owner/dashboard') ? 'active' : '' }}">
@@ -97,6 +99,8 @@
                 <span>Laporan Pendapatan</span>
             </a>
         </li>
+
+        
     @elseif(auth()->user()->role === 'karyawan')
         <li class="nav-item {{ request()->is('karyawan/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('karyawan.dashboard') }}">
@@ -118,6 +122,8 @@
                 <span>Absensi</span>
             </a>
         </li>
+
+        
     @elseif(auth()->user()->role === 'pelanggan')
         <li class="nav-item {{ request()->is('pelanggan/dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pelanggan.dashboard') }}">
@@ -132,6 +138,7 @@
                 <span>Kelola Transaksi</span>
             </a>
         </li>
+
     @endif
 
     <hr class="sidebar-divider d-none d-md-block">
