@@ -17,15 +17,19 @@ class Transaksi extends Model
     protected $fillable = [
         'user_id',
         'layanan_id',
+        'diskon_id',
         'kode_transaksi',
         'berat',
-        'total_harga',
+        'subtotal',
+        'total_diskon',
         'diskon',
+        'total_harga',
         'total_akhir',
         'metode_pembayaran',
         'status_pembayaran',
         'status_transaksi',
         'tanggal_transaksi',
+        'tanggal_selesai',
         // optional untuk Midtrans
         'snap_token',
         'payment_type',
@@ -35,10 +39,14 @@ class Transaksi extends Model
      * Casting tipe data
      */
     protected $casts = [
-        'tanggal_transaksi' => 'datetime',
-        'total_harga'       => 'integer',
-        'diskon'            => 'integer',
-        'total_akhir'       => 'integer',
+        'berat' => 'decimal:2',
+        'subtotal' => 'decimal:2',
+        'total_diskon' => 'decimal:2',
+        'diskon' => 'decimal:2',
+        'total_harga' => 'decimal:2',
+        'total_akhir' => 'decimal:2',
+        'tanggal_transaksi' => 'date',
+        'tanggal_selesai' => 'date',
     ];
 
     /**
@@ -59,27 +67,33 @@ class Transaksi extends Model
         return $this->belongsTo(Layanan::class);
     }
 
+    // Transaksi bisa punya diskon (nullable)
+    public function promo()
+    {
+        return $this->belongsTo(Diskon::class, 'diskon_id');
+    }
+
     /**
      * =====================
      * MUTATORS / ACCESSORS (opsional)
      * =====================
      */
 
-    // total_akhir dengan format rupiah
-    public function getTotalAkhirFormattedAttribute()
-    {
-        return 'Rp ' . number_format($this->total_akhir, 0, ',', '.');
-    }
-
-    // diskon dengan format rupiah
-    public function getDiskonFormattedAttribute()
-    {
-        return 'Rp ' . number_format($this->diskon, 0, ',', '.');
-    }
-
     // total_harga dengan format rupiah
     public function getTotalHargaFormattedAttribute()
     {
         return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
+    }
+
+    // subtotal dengan format rupiah
+    public function getSubtotalFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+    }
+
+    // total_diskon dengan format rupiah
+    public function getTotalDiskonFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->total_diskon, 0, ',', '.');
     }
 }

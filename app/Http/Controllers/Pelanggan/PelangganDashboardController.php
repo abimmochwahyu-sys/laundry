@@ -23,7 +23,7 @@ class PelangganDashboardController extends Controller
 
         $totalPengeluaran = Transaksi::where('user_id', $userId)
             ->where('status_pembayaran', 'lunas')
-            ->sum('total_akhir');
+            ->sum('total_harga');
 
         $transaksiTerbaru = Transaksi::with('layanan')
             ->where('user_id', $userId)

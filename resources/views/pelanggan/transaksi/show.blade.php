@@ -42,7 +42,7 @@
                         </tr>
                         <tr>
                             <th>Tanggal Transaksi</th>
-                            <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d F Y') }}</td>
+                            <td>{{ $transaksi->created_at->format('d F Y') }}</td>
                         </tr>
                         <tr>
                             <th>Estimasi Selesai</th>
@@ -97,17 +97,21 @@
                         </tr>
                         <tr>
                             <td>Subtotal</td>
-                            <td class="text-right">Rp {{ number_format($transaksi->total_harga,0,',','.') }}</td>
+                            <td class="text-right">Rp {{ number_format($transaksi->subtotal,0,',','.') }}</td>
                         </tr>
-                        @if($transaksi->diskon > 0)
+                        @if($transaksi->total_diskon > 0)
                         <tr>
-                            <td>Diskon</td>
-                            <td class="text-right text-success">- Rp {{ number_format($transaksi->diskon,0,',','.') }}</td>
+                            <td>Diskon
+                                @if($transaksi->promo)
+                                    <small class="text-muted">({{ $transaksi->promo->kode_diskon }})</small>
+                                @endif
+                            </td>
+                            <td class="text-right text-success">- Rp {{ number_format($transaksi->total_diskon,0,',','.') }}</td>
                         </tr>
                         @endif
                         <tr class="border-top">
                             <th>Total Bayar</th>
-                            <th class="text-right text-primary">Rp {{ number_format($transaksi->total_akhir,0,',','.') }}</th>
+                            <th class="text-right text-primary">Rp {{ number_format($transaksi->total_harga,0,',','.') }}</th>
                         </tr>
                     </table>
                 </div>

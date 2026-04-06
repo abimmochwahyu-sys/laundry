@@ -64,6 +64,31 @@
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label class="font-weight-bold">
+                                <i class="fas fa-percent mr-1 text-success"></i> Diskon (Opsional)
+                            </label>
+                            <select class="form-control" id="diskon_id" name="diskon_id">
+                                <option value="">-- Tidak ada diskon --</option>
+                                @foreach($diskons as $diskon)
+                                    <option value="{{ $diskon->id }}"
+                                            data-tipe="{{ $diskon->tipe_diskon }}"
+                                            data-nilai="{{ $diskon->nilai }}"
+                                            data-minimum="{{ $diskon->minimum_belanja }}">
+                                        {{ $diskon->kode_diskon }} - {{ $diskon->keterangan }}
+                                        @if($diskon->tipe_diskon == 'persen')
+                                            ({{ $diskon->nilai }}%)
+                                        @else
+                                            (Rp {{ number_format($diskon->nilai, 0, ',', '.') }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Pilih diskon yang tersedia (jika memenuhi syarat minimum belanja)
+                            </small>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -77,7 +102,7 @@
                         </h6>
 
                         <div class="alert alert-info small">
-                            🎉 <b>Diskon 3%</b> berlaku untuk transaksi di atas <b>4 Kg</b>
+                            💡 <b>Diskon Manual:</b> Pilih diskon yang tersedia untuk mendapatkan potongan harga
                         </div>
 
                         <div id="calculation-card" style="display:none;">
@@ -87,7 +112,7 @@
                                     <td class="text-right font-weight-bold" id="subtotal">Rp 0</td>
                                 </tr>
                                 <tr id="diskon-row" style="display:none;">
-                                    <td class="text-success">Diskon (3%)</td>
+                                    <td class="text-success" id="diskon-label">Diskon</td>
                                     <td class="text-right text-success font-weight-bold" id="diskon">Rp 0</td>
                                 </tr>
                                 <tr class="border-top">
@@ -115,9 +140,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const layanan = document.getElementById('layanan_id');
     const berat = document.getElementById('berat');
+    const diskonSelect = document.getElementById('diskon_id');
 
     const subtotalEl = document.getElementById('subtotal');
     const diskonEl = document.getElementById('diskon');
+    const diskonLabel = document.getElementById('diskon-label');
     const totalEl = document.getElementById('total');
     const diskonRow = document.getElementById('diskon-row');
     const card = document.getElementById('calculation-card');
@@ -133,24 +160,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const harga = parseInt(layanan.options[layanan.selectedIndex].dataset.harga);
         const b = parseFloat(berat.value);
-
         let subtotal = harga * b;
         let diskon = 0;
+        let diskonText = '';
 
-        if (b > 4) {
-            diskon = subtotal * 0.03;
+        // Hitung diskon manual jika dipilih
+        if (diskonSelect.value) {
+            const selectedOption = diskonSelect.options[diskonSelect.selectedIndex];
+            const tipe = selectedOption.dataset.tipe;
+            const nilai = parseFloat(selectedOption.dataset.nilai);
+            const minimum = parseFloat(selectedOption.dataset.minimum);
+
+            if (subtotal >= minimum) {
+                if (tipe === 'persen') {
+                    diskon = subtotal * (nilai / 100);
+                    diskonText = `Diskon (${nilai}%)`;
+                } else {
+                    diskon = nilai;
+                    diskonText = 'Diskon (Rp)';
+                }
+            }
+        }
+
+        subtotalEl.textContent = rupiah(subtotal);
+
+        if (diskon > 0) {
             diskonRow.style.display = '';
+            diskonLabel.textContent = diskonText;
+            diskonEl.textContent = '- ' + rupiah(diskon);
         } else {
             diskonRow.style.display = 'none';
         }
 
-        subtotalEl.textContent = rupiah(subtotal);
-        diskonEl.textContent = '- ' + rupiah(diskon);
         totalEl.textContent = rupiah(subtotal - diskon);
     }
 
     layanan.addEventListener('change', hitung);
     berat.addEventListener('input', hitung);
+    diskonSelect.addEventListener('change', hitung);
 });
 </script>
 @endpush

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pelanggan;
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Layanan;
+use App\Models\Diskon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
@@ -38,22 +39,65 @@ class PelangganTransaksiController extends Controller
         return view('pelanggan.transaksi.create', compact('layanans'));
     }
 
+    public function validateDiskon(Request $request)
+    {
+        $request->validate([
+            'kode_diskon' => 'required|string',
+        ]);
+
+        $diskon = Diskon::where('kode_diskon', strtoupper($request->kode_diskon))
+            ->where('is_active', true)
+            ->where('berlaku_sampai', '>=', now()->toDateString())
+            ->first();
+
+        if (!$diskon) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode diskon tidak ditemukan atau sudah kadaluarsa'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'diskon' => [
+                'id' => $diskon->id,
+                'kode_diskon' => $diskon->kode_diskon,
+                'keterangan' => $diskon->keterangan,
+                'tipe_diskon' => $diskon->tipe_diskon,
+                'nilai' => $diskon->nilai,
+                'minimum_belanja' => $diskon->minimum_belanja,
+                'berlaku_sampai' => $diskon->berlaku_sampai
+            ]
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'layanan_id' => 'required|exists:layanans,id',
-            'berat' => 'required|numeric|min:0.1',
+            'berat' => 'required|numeric|min:0.1|max:1000000',
             'metode_pembayaran' => 'required|in:cash,midtrans',
+            'diskon_id' => 'nullable|exists:diskons,id',
         ]);
 
         $layanan = Layanan::findOrFail($request->layanan_id);
         $berat = $request->berat;
 
-        // 💰 Hitung harga sesuai KaryawanTransaksiController
+        // 💰 Hitung harga
         $subtotal = $layanan->harga * $berat;
+        $diskon = 0;
+        $diskonId = null;
 
-        // ✅ Diskon 3% jika berat > 4 kg
-        $diskon = $berat > 4 ? $subtotal * 0.03 : 0;
+        // ✅ Cek diskon dari kode
+        if ($request->diskon_id) {
+            $diskonModel = Diskon::findOrFail($request->diskon_id);
+            
+            // Validasi diskon
+            if ($diskonModel->isValidForAmount($subtotal)) {
+                $diskon = $diskonModel->calculateDiscount($subtotal);
+                $diskonId = $diskonModel->id;
+            }
+        }
 
         // Total akhir
         $totalAkhir = $subtotal - $diskon;
@@ -64,15 +108,18 @@ class PelangganTransaksiController extends Controller
         $transaksi = Transaksi::create([
             'user_id' => Auth::id(),
             'layanan_id' => $request->layanan_id,
+            'diskon_id' => $diskonId,
             'kode_transaksi' => $kodeTransaksi,
             'berat' => $berat,
-            'total_harga' => $subtotal,
+            'subtotal' => $subtotal,
+            'total_diskon' => $diskon,
             'diskon' => $diskon,
+            'total_harga' => $totalAkhir,
             'total_akhir' => $totalAkhir,
             'metode_pembayaran' => $request->metode_pembayaran,
             'status_pembayaran' => $request->metode_pembayaran === 'cash' ? 'lunas' : 'pending',
             'status_transaksi' => 'proses',
-            'tanggal_transaksi' => now(),
+            'tanggal_transaksi' => now()->toDateString(),
         ]);
 
         // 🔹 Generate Snap token jika metode Midtrans
@@ -87,7 +134,7 @@ class PelangganTransaksiController extends Controller
 
     public function show($id)
     {
-        $transaksi = Transaksi::with('layanan')
+        $transaksi = Transaksi::with(['layanan', 'promo'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 

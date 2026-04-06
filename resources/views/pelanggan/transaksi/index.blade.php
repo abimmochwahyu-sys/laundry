@@ -37,9 +37,9 @@
                             <tr>
                                 <td>{{ $transaksi->kode_transaksi }}</td>
                                 <td>{{ $transaksi->layanan->jenis_layanan }}</td>
-                                <td>{{ $transaksi->berat }} kg</td>
-                                <td>Rp {{ number_format($transaksi->total_akhir,0,',','.') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d/m/Y') }}</td>
+                                <td>{{ $transaksi->berat_kg }} kg</td>
+                                <td>Rp {{ number_format($transaksi->total_harga,0,',','.') }}</td>
+                                <td>{{ $transaksi->created_at->format('d/m/Y') }}</td>
                                 <td>
                                     <span class="badge {{ $transaksi->status_pembayaran == 'lunas' ? 'bg-success' : 'bg-warning' }}">
                                         {{ ucfirst($transaksi->status_pembayaran) }}

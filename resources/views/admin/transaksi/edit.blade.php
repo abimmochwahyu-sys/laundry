@@ -70,6 +70,34 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="diskon_id" class="form-label font-weight-bold">
+                                        <i class="fas fa-percent mr-1 text-primary"></i> Diskon
+                                    </label>
+                                    <select class="form-control @error('diskon_id') is-invalid @enderror"
+                                        id="diskon_id" name="diskon_id">
+                                        <option value="">-- Tidak ada diskon --</option>
+                                        @foreach(\App\Models\Diskon::active()->get() as $diskon)
+                                            <option value="{{ $diskon->id }}"
+                                                {{ $transaksi->diskon_id == $diskon->id ? 'selected' : '' }}
+                                                data-tipe="{{ $diskon->tipe_diskon }}"
+                                                data-nilai="{{ $diskon->nilai }}"
+                                                data-minimum="{{ $diskon->minimum_belanja }}">
+                                                {{ $diskon->kode_diskon }} - {{ $diskon->keterangan }}
+                                                @if($diskon->tipe_diskon === 'persen')
+                                                    ({{ $diskon->nilai }}%)
+                                                @else
+                                                    (Rp {{ number_format($diskon->nilai, 0, ',', '.') }})
+                                                @endif
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="form-text text-muted">Pilih diskon yang tersedia</small>
+                                    @error('diskon_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between">
@@ -108,6 +136,12 @@
                                 <th>Berat</th>
                                 <td>: {{ $transaksi->berat }} kg</td>
                             </tr>
+                            @if($transaksi->diskon)
+                                <tr>
+                                    <th>Diskon</th>
+                                    <td>: {{ $transaksi->diskon->kode_diskon }} - {{ $transaksi->diskon->keterangan }}</td>
+                                </tr>
+                            @endif
                             <tr>
                                 <th>Total Bayar</th>
                                 <td>: Rp {{ number_format($transaksi->total_akhir, 0, ',', '.') }}</td>
@@ -143,8 +177,14 @@
                             @if($transaksi->diskon > 0)
                                 <tr>
                                     <td>Diskon</td>
-                                    <td class="text-right text-success">- Rp
-                                        {{ number_format($transaksi->diskon, 0, ',', '.') }}</td>
+                                    <td class="text-right text-success">
+                                        @if($transaksi->diskon)
+                                            - Rp {{ number_format($transaksi->diskon, 0, ',', '.') }}
+                                            <br><small class="text-muted">{{ $transaksi->diskon->kode_diskon }}</small>
+                                        @else
+                                            - Rp {{ number_format($transaksi->diskon, 0, ',', '.') }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endif
                             <tr class="border-top">

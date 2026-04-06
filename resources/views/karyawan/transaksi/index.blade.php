@@ -25,6 +25,7 @@
                                     <th>Berat</th>
                                     <th>Total Bayar</th>
                                     <th>Tanggal</th>
+                                    <th>Status Transaksi</th>
                                     <th>Status Pembayaran</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -41,6 +42,16 @@
                                             {{ is_object($transaksi->tanggal_transaksi)
                                                 ? $transaksi->tanggal_transaksi->format('d/m/Y')
                                                 : date('d/m/Y', strtotime($transaksi->tanggal_transaksi)) }}
+                                        </td>
+                                        <td>
+                                            <span class="badge 
+                                                @if($transaksi->status_transaksi == 'pending') badge-warning
+                                                @elseif($transaksi->status_transaksi == 'proses') badge-primary
+                                                @elseif($transaksi->status_transaksi == 'selesai') badge-success
+                                                @elseif($transaksi->status_transaksi == 'diambil') badge-info
+                                                @endif">
+                                                {{ strtoupper($transaksi->status_transaksi) }}
+                                            </span>
                                         </td>
                                         <td>
                                             <span

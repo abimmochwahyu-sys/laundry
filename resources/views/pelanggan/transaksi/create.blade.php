@@ -83,6 +83,24 @@
                                 </small> --}}
                             </div>
 
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    <i class="fas fa-percent text-success mr-1"></i> Kode Diskon (Opsional)
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="kode_diskon" name="kode_diskon" 
+                                           placeholder="Masukkan kode diskon (misal: DISKON10)">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="btn-validasi-diskon">
+                                            <i class="fas fa-check mr-1"></i>Validasi
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted" id="diskon-error" style="display: none; color: red;"></small>
+                                <small class="text-muted" id="diskon-info" style="display: none; color: green;"></small>
+                                <input type="hidden" name="diskon_id" id="diskon_id" value="">
+                            </div>
+
 
                         </div>
                     </div>
@@ -98,9 +116,8 @@
                                 Promo & Ringkasan
                             </h6>
 
-                            <div class="alert alert-info small">
-                                🎉 Dapatkan <b>diskon 3%</b> untuk transaksi dengan berat
-                                lebih dari <b>4 Kg</b>
+                            <div class="alert alert-success small" id="diskon-promo" style="display: none;">
+                                <span id="diskon-promo-text"></span>
                             </div>
 
                             <!-- Kalkulasi -->
@@ -111,7 +128,7 @@
                                         <td class="text-right font-weight-bold" id="subtotal">Rp 0</td>
                                     </tr>
                                     <tr id="diskon-row" style="display:none;">
-                                        <td class="text-success">Diskon (3%)</td>
+                                        <td class="text-success" id="diskon-label">Diskon</td>
                                         <td class="text-right text-success font-weight-bold" id="diskon">Rp 0</td>
                                     </tr>
                                     <tr class="border-top">
@@ -140,20 +157,86 @@
         document.addEventListener('DOMContentLoaded', () => {
             const layanan = document.getElementById('layanan_id');
             const berat = document.getElementById('berat');
+            const kodeDiskon = document.getElementById('kode_diskon');
+            const btnValidasiDiskon = document.getElementById('btn-validasi-diskon');
+            const diskonIdInput = document.getElementById('diskon_id');
+            const diskonErrorEl = document.getElementById('diskon-error');
+            const diskonInfoEl = document.getElementById('diskon-info');
+            const diskonPromoEl = document.getElementById('diskon-promo');
+            const diskonPromoText = document.getElementById('diskon-promo-text');
 
             const card = document.getElementById('calculation-card');
             const subtotalEl = document.getElementById('subtotal');
             const diskonRow = document.getElementById('diskon-row');
+            const diskonLabel = document.getElementById('diskon-label');
             const diskonEl = document.getElementById('diskon');
             const totalEl = document.getElementById('total');
+
+            let selectedDiskon = null; // Store selected discount info
 
             function rupiah(n) {
                 return 'Rp ' + n.toLocaleString('id-ID');
             }
 
+            // Validasi kode diskon via AJAX
+            btnValidasiDiskon.addEventListener('click', async () => {
+                const code = kodeDiskon.value.trim();
+                
+                if (!code) {
+                    diskonErrorEl.textContent = 'Masukkan kode diskon terlebih dahulu';
+                    diskonErrorEl.style.display = 'block';
+                    diskonInfoEl.style.display = 'none';
+                    selectedDiskon = null;
+                    diskonIdInput.value = '';
+                    hitung();
+                    return;
+                }
+
+                try {
+                    const response = await fetch('{{ route("pelanggan.diskon.validate") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ kode_diskon: code })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        selectedDiskon = data.diskon;
+                        diskonIdInput.value = data.diskon.id;
+                        diskonErrorEl.style.display = 'none';
+                        diskonInfoEl.textContent = `✓ Diskon valid: ${data.diskon.keterangan}`;
+                        diskonInfoEl.style.display = 'block';
+                        hitung();
+                    } else {
+                        diskonErrorEl.textContent = data.message || 'Kode diskon tidak valid atau sudah kadaluarsa';
+                        diskonErrorEl.style.display = 'block';
+                        diskonInfoEl.style.display = 'none';
+                        selectedDiskon = null;
+                        diskonIdInput.value = '';
+                        hitung();
+                    }
+                } catch (error) {
+                    diskonErrorEl.textContent = 'Terjadi kesalahan saat validasi diskon';
+                    diskonErrorEl.style.display = 'block';
+                    diskonInfoEl.style.display = 'none';
+                    console.error('Error:', error);
+                }
+            });
+
+            // Clear discount when code is modified
+            kodeDiskon.addEventListener('input', () => {
+                diskonErrorEl.style.display = 'none';
+                diskonInfoEl.style.display = 'none';
+            });
+
             function hitung() {
                 if (!layanan.value || !berat.value) {
                     card.style.display = 'none';
+                    diskonPromoEl.style.display = 'none';
                     return;
                 }
 
@@ -164,17 +247,41 @@
 
                 const subtotal = harga * b;
                 let diskon = 0;
+                let diskonDescription = '';
 
-                if (b > 4) {
-                    diskon = subtotal * 0.03;
-                    diskonRow.style.display = '';
-                } else {
-                    diskonRow.style.display = 'none';
+                // Priority: 1. Discount code, 2. Default 3% for weight > 4kg
+                if (selectedDiskon) {
+                    // Check minimum purchase
+                    if (subtotal >= selectedDiskon.minimum_belanja) {
+                        if (selectedDiskon.tipe_diskon === 'persen') {
+                            diskon = (subtotal * selectedDiskon.nilai) / 100;
+                            diskonDescription = `Diskon ${selectedDiskon.nilai}% (Kode: ${selectedDiskon.kode_diskon})`;
+                        } else {
+                            diskon = Math.min(selectedDiskon.nilai, subtotal);
+                            diskonDescription = `Diskon Rp ${selectedDiskon.nilai.toLocaleString('id-ID')} (Kode: ${selectedDiskon.kode_diskon})`;
+                        }
+                        diskonPromoEl.style.display = 'none';
+                    } else {
+                        // Minimum tidak terpenuhi, gunakan diskon otomatis
+                        diskonErrorEl.textContent = `Minimum belanja Rp ${selectedDiskon.minimum_belanja.toLocaleString('id-ID')} tidak terpenuhi`;
+                        selectedDiskon = null;
+                        diskonIdInput.value = '';
+                        diskonErrorEl.style.display = 'block';
+                        diskonPromoEl.style.display = 'none';
+                    }
                 }
 
                 card.style.display = 'block';
                 subtotalEl.textContent = rupiah(subtotal);
-                diskonEl.textContent = '- ' + rupiah(diskon);
+                
+                if (diskon > 0) {
+                    diskonRow.style.display = '';
+                    diskonLabel.textContent = diskonDescription;
+                    diskonEl.textContent = '- ' + rupiah(diskon);
+                } else {
+                    diskonRow.style.display = 'none';
+                }
+                
                 totalEl.textContent = rupiah(subtotal - diskon);
             }
 

@@ -32,10 +32,17 @@
     <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="font-weight-bold">📊 Data Laporan Transaksi</h6>
-            <a href="{{ route('admin.laporan.export', request()->all()) }}"
-               class="btn btn-success btn-sm">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </a>
+            <div class="btn-group" role="group" aria-label="Export dan Cetak">
+                <a href="{{ route('admin.laporan.export', request()->all()) }}"
+                   class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+                <a href="{{ route('admin.laporan.print', request()->all()) }}"
+                   class="btn btn-secondary btn-sm"
+                   target="_blank">
+                    <i class="fas fa-print"></i> Cetak PDF
+                </a>
+            </div>
         </div>
 
         <div class="card-body">

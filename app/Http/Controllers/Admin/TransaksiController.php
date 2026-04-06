@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
+use App\Models\Diskon;
 use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
@@ -26,24 +27,41 @@ class TransaksiController extends Controller
         return view('admin.transaksi.edit', compact('transaksi'));
     }
     
-    // Di app/Http/Controllers/Admin/TransaksiController.php
-// ⚠️ IMPORTANT: Admin also cannot set 'diambil' status directly
-// 'diambil' status hanya bisa di-set oleh customer via pickup confirmation
-public function update(Request $request, $id)
+    public function update(Request $request, $id)
 {
-    $transaksi = Transaksi::findOrFail($id);
+    $transaksi = Transaksi::with(['layanan'])->findOrFail($id);
 
     $request->validate([
         'status_transaksi' => 'required|in:pending,proses,selesai',
         'status_pembayaran' => 'required|in:pending,lunas',
         'tanggal_selesai' => 'nullable|date',
+        'diskon_id' => 'nullable|exists:diskons,id',
     ]);
 
-    $transaksi->update([
+    $updateData = [
         'status_transaksi' => $request->status_transaksi,
         'status_pembayaran' => $request->status_pembayaran,
         'tanggal_selesai' => $request->tanggal_selesai,
-    ]);
+        'diskon_id' => $request->diskon_id,
+    ];
+
+    // Hitung ulang diskon jika ada perubahan diskon
+    if ($request->has('diskon_id')) {
+        $diskon = null;
+        $nilaiDiskon = 0;
+
+        if ($request->diskon_id) {
+            $diskon = Diskon::find($request->diskon_id);
+            if ($diskon && $diskon->isValidForAmount($transaksi->total_harga)) {
+                $nilaiDiskon = $diskon->calculateDiscount($transaksi->total_harga);
+            }
+        }
+
+        $updateData['diskon'] = $nilaiDiskon;
+        $updateData['total_akhir'] = $transaksi->total_harga - $nilaiDiskon;
+    }
+
+    $transaksi->update($updateData);
 
     return redirect()->route('admin.transaksi.index')
         ->with('success', 'Transaksi berhasil diperbarui');

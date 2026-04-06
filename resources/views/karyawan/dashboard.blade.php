@@ -155,9 +155,11 @@
                             <td>
                                 @if($transaksi->status_transaksi == 'pending')
                                     <span class="badge badge-warning">Pending</span>
+                                @elseif($transaksi->status_transaksi == 'proses')
+                                    <span class="badge badge-primary">Proses</span>
                                 @elseif($transaksi->status_transaksi == 'selesai')
                                     <span class="badge badge-success">Selesai</span>
-                                @else
+                                @elseif($transaksi->status_transaksi == 'diambil')
                                     <span class="badge badge-info">Diambil</span>
                                 @endif
                             </td>
