@@ -158,8 +158,15 @@
                     </a>
                     @endif
 
+                    <!-- Midtrans Payment Button (If Pending & Midtrans Method) -->
+                    @if($transaksi->status_pembayaran == 'pending' && $transaksi->metode_pembayaran == 'midtrans' && $transaksi->snap_token)
+                    <button class="btn btn-primary btn-block mb-2" id="pay-button">
+                        <i class="fas fa-credit-card mr-1"></i> Bayar Sekarang (Midtrans)
+                    </button>
+                    @endif
+
                     <!-- Cetak Invoice -->
-                    <a href="{{ route('karyawan.transaksi.invoice', $transaksi->id) }}" target="_blank" class="btn btn-primary btn-block">
+                    <a href="{{ route('karyawan.transaksi.invoice', $transaksi->id) }}" target="_blank" class="btn btn-outline-primary btn-block">
                         <i class="fas fa-print mr-1"></i> Cetak Invoice
                     </a>
                 </div>
@@ -168,3 +175,25 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+<script type="text/javascript">
+    const payButton = document.getElementById('pay-button');
+    if (payButton) {
+        payButton.onclick = function() {
+            snap.pay('{{ $transaksi->snap_token }}', {
+                onSuccess: function(result) {
+                    window.location.reload();
+                },
+                onPending: function(result) {
+                    window.location.reload();
+                },
+                onError: function(result) {
+                    alert("Pembayaran Gagal!");
+                }
+            });
+        };
+    }
+</script>
+@endpush

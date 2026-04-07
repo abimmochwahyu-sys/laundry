@@ -26,6 +26,7 @@ class PelangganController extends Controller
         $request->validate([
             'nama'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
             'alamat'   => 'required|string|max:255',
             'telepon'  => 'required|string|max:15',
         ]);
@@ -34,7 +35,7 @@ class PelangganController extends Controller
         $user = User::create([
             'name'     => $request->nama,
             'email'    => $request->email,
-            'password' => Hash::make('password'),
+            'password' => Hash::make($request->password),
             'role'     => 'pelanggan',
         ]);
 
@@ -62,15 +63,23 @@ class PelangganController extends Controller
         $request->validate([
             'nama'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,' . $pelanggan->user_id,
+            'password' => 'nullable|string|min:6',
             'alamat'   => 'required|string|max:255',
             'telepon'  => 'required|string|max:15',
         ]);
 
         // update user
-        $pelanggan->user->update([
+        $userData = [
             'name'  => $request->nama,
             'email' => $request->email,
-        ]);
+        ];
+
+        // update password jika diisi
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        $pelanggan->user->update($userData);
 
         // update pelanggan
         $pelanggan->update([

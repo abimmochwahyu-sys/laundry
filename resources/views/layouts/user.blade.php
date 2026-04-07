@@ -77,7 +77,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('user.dashboard') }}">
+                href="{{ route('pelanggan.dashboard') }}">
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-tshirt"></i>
                 </div>
@@ -88,8 +88,8 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
             <!-- Dashboard -->
-            <li class="nav-item {{ request()->is('user/dashboard') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('user.dashboard') }}">
+            <li class="nav-item {{ request()->is('pelanggan/dashboard') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pelanggan.dashboard') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -97,8 +97,8 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Layanan</div>
             <!-- Transaksi -->
-            <li class="nav-item {{ request()->is('user/transaksi*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('user/transaksi') }}">
+            <li class="nav-item {{ request()->is('pelanggan/transaksi*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ url('pelanggan/transaksi') }}">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Transaksi</span>
                 </a>
@@ -116,31 +116,56 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search position-relative" id="menuSearchFormUser">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text" class="form-control bg-light border-0 small" id="menuSearchInputUser"
+                                placeholder="Cari menu... (misal: Transaksi)" aria-label="Search" aria-describedby="basic-addon2" autocomplete="off">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
                         </div>
+                        <div id="menuSearchResultsUser" class="dropdown-menu shadow animated--fade-in" style="width: 100%; top: 45px; display: none; background: white !important; z-index: 9999;"></div>
                     </form>
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                    {{ Auth::user()->username }}
-                                </span>
-                                <i class="fas fa-dragon logo-naga-animated"></i>
-                            </a>
+                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <span class="mr-3 d-none d-lg-inline text-gray-700 font-weight-bold small" style="font-family: 'Outfit', sans-serif;">
+                                     {{ Auth::user()->name }}
+                                 </span>
+                                 <div class="user-initials-avatar">
+                                     {{ Auth::user()->initials }}
+                                 </div>
+                             </a>
+                            <style>
+                                .user-initials-avatar {
+                                    width: 40px;
+                                    height: 40px;
+                                    background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+                                    color: white;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    font-family: 'Outfit', sans-serif;
+                                    box-shadow: 0 10px 15px -3px rgba(2, 132, 199, 0.3), 0 4px 6px -2px rgba(2, 132, 199, 0.05);
+                                    border: 3px solid #ffffff;
+                                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                                    cursor: pointer;
+                                }
+                                .nav-link:hover .user-initials-avatar {
+                                    transform: scale(1.1) rotate(5deg);
+                                    box-shadow: 0 20px 25px -5px rgba(2, 132, 199, 0.4);
+                                }
+                            </style>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item nav-link {{ request()->is('user/profile') ? 'active' : '' }}" href="{{  url('/user/profile') }}">
+                                <a class="dropdown-item nav-link {{ request()->is('pelanggan/profile') ? 'active' : '' }}" href="{{  route('pelanggan.profile') }}">
                                     <i class="fas fa-user mr-2"></i>
                                     Profil Saya
                                 </a>
@@ -186,6 +211,95 @@
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-</body>
+ 
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+    <!-- Logout Form -->
+    <form id="logoutFormUser" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+ 
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Anda akan keluar dari sesi ini!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0277bd',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logoutFormUser').submit();
+                }
+            });
+        });
+
+        // Enhanced Menu Search Logic for User (Topbar looking into Sidebar)
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('menuSearchInputUser');
+            const resultsContainer = document.getElementById('menuSearchResultsUser');
+            
+            if (!searchInput || !resultsContainer) return;
+
+            function getMenuItems() {
+                const sidebarLinks = document.querySelectorAll('#accordionSidebar .nav-link');
+                let items = [];
+                sidebarLinks.forEach(link => {
+                    const span = link.querySelector('span');
+                    const text = span ? span.innerText.trim() : link.innerText.trim();
+                    const href = link.getAttribute('href');
+                    if (text && href && href !== '#' && !href.includes('javascript')) {
+                        items.push({ text: text, href: href });
+                    }
+                });
+                return items;
+            }
+
+            const menuItems = getMenuItems();
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                resultsContainer.innerHTML = '';
+                
+                if (query.length < 1) {
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+
+                const filtered = menuItems.filter(item => 
+                    item.text.toLowerCase().includes(query)
+                );
+
+                if (filtered.length > 0) {
+                    const uniqueResults = Array.from(new Set(filtered.map(i => JSON.stringify(i)))).map(s => JSON.parse(s));
+                    
+                    uniqueResults.forEach(item => {
+                        const a = document.createElement('a');
+                        a.className = 'dropdown-item d-flex align-items-center py-2';
+                        a.href = item.href;
+                        a.innerHTML = `<i class="fas fa-link mr-2 text-info small"></i> <span>${item.text}</span>`;
+                        resultsContainer.appendChild(a);
+                    });
+                    resultsContainer.style.display = 'block';
+                } else {
+                    resultsContainer.innerHTML = '<div class="dropdown-item text-muted small py-2 text-center">Menu tidak ditemukan...</div>';
+                    resultsContainer.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                    resultsContainer.style.display = 'none';
+                }
+            });
+        });
+    </script>
+ </body>
 
 </html>

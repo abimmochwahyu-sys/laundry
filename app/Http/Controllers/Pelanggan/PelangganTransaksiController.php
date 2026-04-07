@@ -36,7 +36,11 @@ class PelangganTransaksiController extends Controller
     public function create()
     {
         $layanans = Layanan::all();
-        return view('pelanggan.transaksi.create', compact('layanans'));
+        $diskons = Diskon::where('is_active', true)
+            ->where('berlaku_sampai', '>=', now()->toDateString())
+            ->get();
+            
+        return view('pelanggan.transaksi.create', compact('layanans', 'diskons'));
     }
 
     public function validateDiskon(Request $request)

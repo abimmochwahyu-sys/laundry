@@ -42,12 +42,26 @@
 
             <div class="form-group mb-3">
                 <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" class="form-control" required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group mb-3">
                 <label>Konfirmasi Password</label>
-                <input type="password" name="password_confirmation" class="form-control" required>
+                <div class="input-group">
+                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                            <i class="fas fa-eye" id="eyeIconConfirm"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <button class="btn btn-primary">Simpan</button>
@@ -55,4 +69,36 @@
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    }
+});
+
+document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+    const confirmPasswordField = document.getElementById('password_confirmation');
+    const eyeIconConfirm = document.getElementById('eyeIconConfirm');
+    
+    if (confirmPasswordField.type === 'password') {
+        confirmPasswordField.type = 'text';
+        eyeIconConfirm.classList.remove('fa-eye');
+        eyeIconConfirm.classList.add('fa-eye-slash');
+    } else {
+        confirmPasswordField.type = 'password';
+        eyeIconConfirm.classList.remove('fa-eye-slash');
+        eyeIconConfirm.classList.add('fa-eye');
+    }
+});
+</script>
 @endsection

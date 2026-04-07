@@ -14,6 +14,9 @@ Route::middleware(['auth', 'role:owner'])
 
         // LAPORAN OWNER
         Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
+        Route::get('/laporan/export/excel', [OwnerLaporanController::class, 'exportExcel'])->name('laporan.export.excel');
+        Route::get('/laporan/export/pdf', [OwnerLaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+        Route::get('/laporan/test-pdf', [OwnerLaporanController::class, 'testPdf'])->name('laporan.test.pdf');
         
         // PROFILE OWNER
         Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');

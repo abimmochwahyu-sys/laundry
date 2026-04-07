@@ -31,6 +31,20 @@
 
                         <div class="form-group">
                             <label class="font-weight-bold">
+                                <i class="fas fa-user mr-1 text-primary"></i> Pelanggan
+                            </label>
+                            <select class="form-control" name="user_id" required>
+                                <option value="" disabled selected>-- Pilih Pelanggan --</option>
+                                @foreach($pelanggans as $pelanggan)
+                                    <option value="{{ $pelanggan->id }}">
+                                        {{ $pelanggan->name }} ({{ $pelanggan->email }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">
                                 <i class="fas fa-concierge-bell mr-1 text-primary"></i> Jenis Layanan
                             </label>
                             <select class="form-control" id="layanan_id" name="layanan_id" required>
@@ -60,7 +74,7 @@
                             <select class="form-control" name="metode_pembayaran" required>
                                 <option value="" disabled selected>-- Pilih Metode --</option>
                                 <option value="cash">Cash</option>
-                                <option value="e-wallet">E-Wallet</option>
+                                <option value="midtrans">E-Wallet / Transfer (Midtrans)</option>
                             </select>
                         </div>
 

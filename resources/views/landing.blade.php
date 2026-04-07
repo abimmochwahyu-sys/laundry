@@ -310,7 +310,7 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, rgba(116, 185, 255, 0.9) 0%, rgba(162, 155, 254, 0.9) 100%), url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             text-align: center;
             padding: 100px 20px;

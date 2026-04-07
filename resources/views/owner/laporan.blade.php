@@ -83,9 +83,19 @@
         <h6 class="m-0 font-weight-bold text-primary">
             📋 Detail Transaksi Laundry
         </h6>
-        <span class="badge badge-primary px-3">
-            {{ $laporan->count() }} Data
-        </span>
+        <div class="d-flex align-items-center">
+            <span class="badge badge-primary px-3 mr-3">
+                {{ $laporan->count() }} Data
+            </span>
+            <div class="btn-group" role="group">
+                <a href="{{ route('owner.laporan.export.excel') }}" class="btn btn-success btn-sm" target="_blank">
+                    <i class="fas fa-file-excel mr-1"></i> Export Excel
+                </a>
+                <a href="{{ route('owner.laporan.export.pdf') }}" class="btn btn-danger btn-sm" target="_blank">
+                    <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="card-body">

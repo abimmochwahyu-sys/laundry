@@ -38,7 +38,7 @@
                     <i class="fas fa-file-excel"></i> Export Excel
                 </a>
                 <a href="{{ route('admin.laporan.print', request()->all()) }}"
-                   class="btn btn-secondary btn-sm"
+                   class="btn btn-danger btn-sm"
                    target="_blank">
                     <i class="fas fa-print"></i> Cetak PDF
                 </a>

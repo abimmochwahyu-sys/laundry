@@ -9,9 +9,19 @@ use App\Models\Diskon;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class KaryawanTransaksiController extends Controller
 {
+    public function __construct()
+    {
+        // ✅ Konfigurasi Midtrans
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = filter_var(env('MIDTRANS_IS_PRODUCTION'), FILTER_VALIDATE_BOOLEAN);
+        Config::$isSanitized = filter_var(env('MIDTRANS_SANITIZED'), FILTER_VALIDATE_BOOLEAN);
+        Config::$is3ds = filter_var(env('MIDTRANS_3DS'), FILTER_VALIDATE_BOOLEAN);
+    }
     // Tampilkan semua transaksi
     public function index()
     {
@@ -25,6 +35,7 @@ class KaryawanTransaksiController extends Controller
         return view('karyawan.transaksi.create', [
             'layanans' => Layanan::all(),
             'diskons' => Diskon::active()->get(),
+            'pelanggans' => \App\Models\User::where('role', 'pelanggan')->get(),
         ]);
     }
 
@@ -32,9 +43,10 @@ class KaryawanTransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
             'layanan_id' => 'required|exists:layanans,id',
             'berat' => 'required|numeric|min:0.1',
-            'metode_pembayaran' => 'required|in:cash,e-wallet',
+            'metode_pembayaran' => 'required|in:cash,midtrans',
             'diskon_id' => 'nullable|exists:diskons,id',
         ]);
 
@@ -58,20 +70,29 @@ class KaryawanTransaksiController extends Controller
 
         $total = $subtotal - $diskon;
 
-        Transaksi::create([
-            'user_id' => Auth::id(),
+        $kodeTransaksi = 'TRX-' . now()->format('Ymd') . '-' . rand(1000, 9999);
+
+        $transaksi = Transaksi::create([
+            'user_id' => $request->user_id,
             'layanan_id' => $request->layanan_id,
             'berat' => $request->berat,
             'diskon_id' => $request->diskon_id,
+            'kode_transaksi' => $kodeTransaksi,
             'subtotal' => $subtotal,
             'total_diskon' => $diskon,
             'diskon' => $diskon,
             'total_harga' => $total,
             'total_akhir' => $total,
             'metode_pembayaran' => $request->metode_pembayaran,
+            'status_pembayaran' => $request->metode_pembayaran === 'cash' ? 'lunas' : 'pending',
             'status_transaksi' => 'proses',
             'tanggal_transaksi' => now()->toDateString(),
         ]);
+
+        // 🔹 Generate Snap token jika metode Midtrans
+        if ($request->metode_pembayaran === 'midtrans') {
+            $transaksi = $this->generateSnapToken($transaksi);
+        }
 
         return redirect()
             ->route('karyawan.transaksi.index')
@@ -82,6 +103,11 @@ class KaryawanTransaksiController extends Controller
     public function show($id)
     {
         $transaksi = Transaksi::with(['user', 'layanan'])->findOrFail($id);
+
+        // 🔹 Pastikan Snap token ada untuk transaksi Midtrans
+        if ($transaksi->metode_pembayaran === 'midtrans' && !$transaksi->snap_token) {
+            $transaksi = $this->generateSnapToken($transaksi);
+        }
 
         // Jika tanggal_selesai kosong, hitung otomatis dari tanggal_transaksi + estimasi_hari
         if (!$transaksi->tanggal_selesai && $transaksi->layanan->estimasi_hari) {
@@ -167,5 +193,32 @@ class KaryawanTransaksiController extends Controller
     {
         $transaksi = Transaksi::with(['user', 'layanan'])->findOrFail($id);
         return view('karyawan.transaksi.invoice', compact('transaksi'));
+    }
+
+    /**
+     * 🔹 Generate Snap token untuk transaksi Midtrans
+     */
+    private function generateSnapToken($transaksi)
+    {
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaksi->kode_transaksi,
+                'gross_amount' => $transaksi->total_akhir,
+            ],
+            'customer_details' => [
+                'first_name' => $transaksi->user->name,
+                'email' => $transaksi->user->email,
+            ],
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+            $transaksi->update(['snap_token' => $snapToken]);
+            $transaksi->snap_token = $snapToken;
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan Midtrans: ' . $e->getMessage());
+        }
+
+        return $transaksi;
     }
 }

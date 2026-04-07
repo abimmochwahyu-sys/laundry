@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('admin123'), // password bcrypt
+                'password' => Hash::make('12345678'), // password bcrypt
                 'role' => 'admin',
             ]
         );
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             ['email' => 'karyawan@gmail.com'],
             [
                 'name' => 'karyawan',
-                'password' => Hash::make('karyawan123'), // password bcrypt
+                'password' => Hash::make('12345678'), // password bcrypt
                 'role' => 'karyawan',
             ]
         );
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
             ['email' => 'owner@gmail.com'],
             [
                 'name' => 'owner',
-                'password' => Hash::make('owner123'), // password bcrypt
+                'password' => Hash::make('12345678'), // password bcrypt
                 'role' => 'owner',
             ]
         );

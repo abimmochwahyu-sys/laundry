@@ -27,26 +27,6 @@
         </div>
     </div>
 
-    {{-- Alert --}}
-    @if (session('success'))
-        <div class="alert alert-success shadow-sm">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger shadow-sm">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('warning'))
-        <div class="alert alert-warning">
-            {{ session('warning') }}
-        </div>
-    @endif
-
-
     <!-- QR Code Absensi -->
     <div class="card shadow mb-4">
 
@@ -180,6 +160,39 @@ function updateClock() {
 
 setInterval(updateClock, 1000);
 updateClock();
+
+// Suara ketika berhasil absen
+@if(session('success'))
+    // Buat audio context untuk suara yang jelas dan keras
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSuccessSound() {
+        // Buat suara beep yang sederhana dan jelas
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Suara beep dengan frekuensi konstan
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // Frekuensi beep standar
+        
+        oscillator.type = 'square'; // Square wave untuk beep yang tajam
+        
+        // Volume cukup keras
+        gainNode.gain.setValueAtTime(0.7, audioContext.currentTime); // Volume 70%
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3); // Fade out cepat
+        
+        // Mainkan beep singkat selama 0.3 detik
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+    }
+    
+    // Mainkan suara setelah halaman load
+    window.addEventListener('load', function() {
+        setTimeout(playSuccessSound, 500); // Delay 500ms agar tidak langsung
+    });
+@endif
 
 </script>
 

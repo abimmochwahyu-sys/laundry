@@ -34,6 +34,19 @@
                 </div>
 
                 <div class="form-group mb-3">
+                    <label>Password</label>
+                    <div class="input-group">
+                        <input type="password" name="password" id="password" class="form-control" minlength="6">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password (minimal 6 karakter jika diisi)</small>
+                </div>
+
+                <div class="form-group mb-3">
                     <label>Alamat</label>
                     <textarea name="alamat" class="form-control" required>{{ old('alamat', $pelanggan->alamat) }}</textarea>
                 </div>
@@ -48,4 +61,21 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+    </script>
 @endsection

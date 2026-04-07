@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Karyawan\DashboardController;
 use App\Http\Controllers\Karyawan\KaryawanTransaksiController;
 use App\Http\Controllers\Karyawan\AbsensiController;
+use App\Http\Controllers\Karyawan\KaryawanDiskonController;
 use App\Http\Controllers\UserProfileController;
 
 Route::middleware(['auth', 'role:karyawan'])

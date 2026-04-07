@@ -106,7 +106,6 @@
                 <span>Laporan Pendapatan</span>
             </a>
         </li>
-
         
     @elseif(auth()->user()->role === 'karyawan')
         <li class="nav-item {{ request()->is('karyawan/dashboard') ? 'active' : '' }}">
@@ -130,6 +129,13 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('karyawan/diskon*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('karyawan.diskon.index') }}">
+                <i class="fas fa-percent"></i>
+                <span>Diskon</span>
+            </a>
+        </li>
+
         
     @elseif(auth()->user()->role === 'pelanggan')
         <li class="nav-item {{ request()->is('pelanggan/dashboard') ? 'active' : '' }}">
@@ -145,6 +151,8 @@
                 <span>Buat Transaksi</span>
             </a>
         </li>
+
+        
 
     @endif
 
