@@ -74,7 +74,7 @@
                                 </span>
                             </td>
                             <td>{{ $transaksi->tanggal_transaksi->format('d-m-Y') }}</td>
-                            <td>{{ $transaksi->user->name }}</td>
+                            <td>{{ $transaksi->customer_name }}</td>
                             <td>{{ $transaksi->layanan->jenis_layanan }}</td>
                             <td>{{ number_format($transaksi->berat, 2) }} Kg</td>
                             <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>

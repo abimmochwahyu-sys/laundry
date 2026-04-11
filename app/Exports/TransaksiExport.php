@@ -85,7 +85,7 @@ class TransaksiExport implements
             $rowNumber,
             $transaksi->kode_transaksi ?? '-',
             $transaksi->tanggal_transaksi->format('d/m/Y'),
-            $transaksi->user->name ?? '-',
+            $transaksi->customer_name,
             $transaksi->layanan->jenis_layanan ?? '-',
             (float) $transaksi->berat,
             (float) ($transaksi->layanan->harga ?? 0),
