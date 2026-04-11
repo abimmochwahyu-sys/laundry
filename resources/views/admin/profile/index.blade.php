@@ -13,12 +13,6 @@
 
             <div class="card-body">
 
-                {{-- NOTIF SUKSES --}}
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
 
                 {{-- ERROR VALIDASI --}}
                 @if ($errors->any())

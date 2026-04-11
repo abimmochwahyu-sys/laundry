@@ -33,48 +33,6 @@
             {{-- Topbar --}}
             @include('layouts.topbar')
 
-            {{-- Global Notifications --}}
-            <div class="container-fluid mt-3 px-4">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <strong>Berhasil!</strong> {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        <strong>Gagal!</strong> {{ session('error') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('warning'))
-                    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <strong>Perhatian!</strong> {{ session('warning') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('info'))
-                    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        <strong>Info!</strong> {{ session('info') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-            </div>
 
             <!-- Page Content -->
             <div class="container-fluid">
@@ -177,6 +135,31 @@
         showConfirmButton: true,
         toast: true,
         position: 'top-end'
+    });
+@endif
+
+@if(session('warning'))
+    Swal.fire({
+        icon: 'warning',
+        title: 'Perhatian!',
+        text: '{{ session("warning") }}',
+        timer: 4000,
+        showConfirmButton: true,
+        toast: true,
+        position: 'top-end'
+    });
+@endif
+
+@if(session('info'))
+    Swal.fire({
+        icon: 'info',
+        title: 'Informasi',
+        text: '{{ session("info") }}',
+        timer: 3000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        timerProgressBar: true
     });
 @endif
 </script>

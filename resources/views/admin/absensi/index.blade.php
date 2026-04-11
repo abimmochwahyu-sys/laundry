@@ -35,18 +35,6 @@
             <i class="fas fa-user-check"></i> Data Absensi Karyawan
         </h1>
 
-        {{-- ALERT --}}
-        @if (session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger">
-                <i class="fas fa-times-circle"></i> {{ session('error') }}
-            </div>
-        @endif
 
         <!-- CARD SCANNER -->
 
@@ -200,38 +188,17 @@ window.speechSynthesis.onvoiceschanged = function() {
     window.speechSynthesis.getVoices();
 };
 
-        // --- LOGIKA SWEETALERT & SUARA DARI SESSION ---
+        // --- LOGIKA SUARA DARI SESSION (NOTIFIKASI UI DIHANDLE LAYOUT) ---
         @if (session('success'))
-            let msgSuccess = "{{ session('success') }}";
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: msgSuccess,
-                showConfirmButton: true
-            });
-            speak(msgSuccess); // Browser menyebutkan nama & status
+            speak("{{ session('success') }}");
         @endif
 
         @if (session('error'))
-            let msgError = "{{ session('error') }}";
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: msgError,
-                showConfirmButton: true
-            });
-            speak(msgError); // Browser menyebutkan alasan gagal
+            speak("{{ session('error') }}");
         @endif
 
         @if (session('warning'))
-            let msgWarning = "{{ session('warning') }}";
-            Swal.fire({
-                icon: 'warning',
-                title: 'Peringatan!',
-                text: msgWarning,
-                showConfirmButton: true
-            });
-            speak(msgWarning);
+            speak("{{ session('warning') }}");
         @endif
 
         // --- LOGIKA SCANNER QR ---

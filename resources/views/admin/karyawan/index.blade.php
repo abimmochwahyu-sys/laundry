@@ -5,11 +5,6 @@
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Data Karyawan</h1>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <a href="{{ route('admin.karyawan.create') }}" class="btn btn-primary mb-3">
         + Tambah Karyawan

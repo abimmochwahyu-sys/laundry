@@ -15,13 +15,6 @@
 
             <div class="card-body">
 
-                {{-- NOTIF SUKSES --}}
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                @endif
 
                 {{-- ERROR VALIDASI --}}
                 @if ($errors->any())

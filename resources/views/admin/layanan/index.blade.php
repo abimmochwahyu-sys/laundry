@@ -3,14 +3,6 @@
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Data Layanan</h1>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
 
     <div class="d-flex justify-content-end mb-3">
         <a href="{{ route('admin.layanan.create') }}" class="btn btn-primary">

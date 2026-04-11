@@ -299,6 +299,56 @@
                 }
             });
         });
+        // SweetAlert Notifications
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session("success") }}',
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end',
+                timerProgressBar: true
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: '{{ session("error") }}',
+                timer: 4000,
+                showConfirmButton: true,
+                toast: true,
+                position: 'top-end'
+            });
+        @endif
+
+        @if(session('warning'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian!',
+                text: '{{ session("warning") }}',
+                timer: 4000,
+                showConfirmButton: true,
+                toast: true,
+                position: 'top-end'
+            });
+        @endif
+
+        @if(session('info'))
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: '{{ session("info") }}',
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end',
+                timerProgressBar: true
+            });
+        @endif
     </script>
  </body>
 
