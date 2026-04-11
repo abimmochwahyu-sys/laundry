@@ -198,6 +198,11 @@
                     <td>
                         <h1 class="brand-name">SICLEAN</h1>
                         <p class="report-title">Laporan Transaksi Laundry</p>
+                        @if(isset($from) && isset($to))
+                            <p style="font-size: 10px; margin-top: 5px; opacity: 0.8;">
+                                Periode: {{ \Carbon\Carbon::parse($from)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($to)->format('d/m/Y') }}
+                            </p>
+                        @endif
                     </td>
                     <td class="date-info">
                         <p>Tanggal Cetak: {{ $tanggal }}</p>
@@ -212,7 +217,7 @@
                 <tr>
                     <td class="summary-card">
                         <span class="summary-label">Total Transaksi</span>
-                        <span class="summary-value">{{ $total_transaksi }}</span>
+                        <span class="summary-label">{{ $total_transaksi }}</span>
                     </td>
                     <td class="summary-card">
                         <span class="summary-label">Total Pendapatan</span>
@@ -230,12 +235,13 @@
             <thead>
                 <tr>
                     <th class="text-center" width="5%">No</th>
-                    <th width="15%">Kode</th>
-                    <th width="15%">Tanggal</th>
-                    <th width="20%">Pelanggan</th>
+                    <th width="12%">Kode</th>
+                    <th width="12%">Tanggal</th>
+                    <th width="18%">Pelanggan</th>
                     <th width="15%">Layanan</th>
+                    <th class="text-center" width="13%">Status</th>
                     <th class="text-center" width="10%">Berat</th>
-                    <th class="text-right" width="20%">Total</th>
+                    <th class="text-right" width="15%">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -244,22 +250,19 @@
                         <td class="text-center">{{ $index + 1 }}</td>
                         <td class="font-bold">{{ $item->kode_transaksi ?? '-' }}</td>
                         <td>{{ $item->created_at->format('d/m/Y') }}</td>
-                        <td>
-                            {{ $item->user->name ?? 'Umum' }}
-                            @if(isset($item->status_pembayaran))
-                                <br>
-                                <span class="badge {{ $item->status_pembayaran == 'dibayar' ? 'badge-success' : 'badge-warning' }}">
-                                    {{ $item->status_pembayaran }}
-                                </span>
-                            @endif
-                        </td>
+                        <td>{{ $item->user->name ?? 'Umum' }}</td>
                         <td>{{ $item->layanan->jenis_layanan ?? '-' }}</td>
+                        <td class="text-center">
+                            <span class="badge {{ $item->status_pembayaran == 'dibayar' ? 'badge-success' : 'badge-warning' }}">
+                                {{ $item->status_pembayaran == 'dibayar' ? 'DIBAYAR' : 'BELUM BAYAR' }}
+                            </span>
+                        </td>
                         <td class="text-center">{{ number_format($item->berat, 1) }} Kg</td>
                         <td class="text-right font-bold">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center" style="padding: 30px;">Data laporan tidak ditemukan untuk periode ini.</td>
+                        <td colspan="8" class="text-center" style="padding: 30px;">Data laporan tidak ditemukan untuk periode ini.</td>
                     </tr>
                 @endforelse
             </tbody>

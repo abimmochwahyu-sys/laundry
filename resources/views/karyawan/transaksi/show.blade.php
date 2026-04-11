@@ -176,9 +176,9 @@
                     </button>
                     @endif
 
-                    <!-- Cetak Invoice -->
+                    <!-- Cetak Struk -->
                     <a href="{{ route('karyawan.transaksi.invoice', $transaksi->id) }}" target="_blank" class="btn btn-outline-primary btn-block">
-                        <i class="fas fa-print mr-1"></i> Cetak Invoice
+                        <i class="fas fa-receipt mr-1"></i> Cetak Struk
                     </a>
                 </div>
             </div>

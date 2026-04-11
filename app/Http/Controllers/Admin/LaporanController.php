@@ -72,15 +72,7 @@ class LaporanController extends Controller
             'total_akhir' => $transaksis->sum('total_akhir'),
         ];
 
-        $dompdf = new Dompdf();
-        $html = view('admin.exports.laporan-pdf', $data)->render();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        $fileName = 'laporan-admin-' . Carbon::now()->format('Y-m-d-H-i-s') . '.pdf';
-
-        return $dompdf->stream($fileName, ['Attachment' => false]);
+        return view('admin.exports.laporan-thermal', $data);
     }
 
     // ===============================

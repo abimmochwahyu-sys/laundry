@@ -83,6 +83,12 @@
                                                 class="btn btn-info btn-sm">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            <a href="{{ route('karyawan.transaksi.invoice', $transaksi->id) }}"
+                                                target="_blank"
+                                                class="btn btn-primary btn-sm"
+                                                title="Cetak Struk">
+                                                <i class="fas fa-receipt"></i>
+                                            </a>
                                             <a href="{{ route('karyawan.transaksi.edit', $transaksi->id) }}"
                                                 class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>

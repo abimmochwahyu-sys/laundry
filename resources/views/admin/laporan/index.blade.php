@@ -38,9 +38,9 @@
                     <i class="fas fa-file-excel"></i> Export Excel
                 </a>
                 <a href="{{ route('admin.laporan.print', request()->all()) }}"
-                   class="btn btn-danger btn-sm"
+                   class="btn btn-secondary btn-sm"
                    target="_blank">
-                    <i class="fas fa-print"></i> Cetak PDF
+                    <i class="fas fa-receipt"></i> Cetak Struk
                 </a>
             </div>
         </div>
@@ -99,8 +99,9 @@
                             <td>
                                 <a href="{{ route('admin.laporan.invoice', $transaksi->id) }}"
                                    class="btn btn-primary btn-sm"
-                                   target="_blank">
-                                    <i class="fas fa-print"></i>
+                                   target="_blank"
+                                   title="Cetak Struk">
+                                    <i class="fas fa-receipt"></i>
                                 </a>
                             </td>
                         </tr>

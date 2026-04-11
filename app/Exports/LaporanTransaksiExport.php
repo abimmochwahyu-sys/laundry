@@ -58,17 +58,17 @@ class LaporanTransaksiExport implements
     /**
      * Define the headings for the Excel file
      */
-    public function headings(): array
+     public function headings(): array
     {
         return [
             'No',
-            'Tanggal',
             'Kode Transaksi',
+            'Tanggal',
             'Pelanggan',
             'Layanan',
-            'Berat (Kg)',
-            'Total Harga',
             'Status',
+            'Berat',
+            'Total Harga',
         ];
     }
 
@@ -82,21 +82,21 @@ class LaporanTransaksiExport implements
 
         return [
             $counter,
-            $transaksi->created_at->format('d/m/Y'),
             $transaksi->kode_transaksi ?? '-',
+            $transaksi->created_at->format('d/m/Y'),
             $transaksi->user->name ?? 'Umum',
             $transaksi->layanan->jenis_layanan ?? '-',
+            $transaksi->status_pembayaran == 'dibayar' ? 'DIBAYAR' : 'BELUM BAYAR',
             (float) $transaksi->berat,
             (float) $transaksi->total_harga,
-            strtoupper($transaksi->status_pembayaran ?? 'PENDING'),
         ];
     }
 
     public function columnFormats(): array
     {
         return [
-            'F' => '#,##0.0" Kg"',
-            'G' => '"Rp "#,##0',
+            'G' => '#,##0.0" Kg"',
+            'H' => '"Rp "#,##0',
         ];
     }
 
