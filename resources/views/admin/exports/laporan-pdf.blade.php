@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Transaksi Laundry (Admin) - CLEANS3</title>
+    <title>Laporan Transaksi Laundry (Admin) - SICLEAN</title>
     <style>
         @page {
             margin: 0cm 0cm;
@@ -247,7 +247,7 @@
                         <td class="text-center">{{ $index + 1 }}</td>
                         <td class="font-bold">{{ $item->kode_transaksi ?? '-' }}</td>
                         <td>{{ $item->tanggal_transaksi->format('d/m/Y') }}</td>
-                        <td>{{ $item->user->name ?? 'Umum' }}</td>
+                        <td>{{ $item->customer_name }}</td>
                         <td>{{ $item->layanan->jenis_layanan ?? '-' }}</td>
                         <td class="text-center">{{ number_format($item->berat, 1) }} Kg</td>
                         <td class="text-right font-bold">Rp {{ number_format($item->total_akhir, 0, ',', '.') }}</td>
@@ -294,7 +294,7 @@
                     <td>
                         <div class="notes">
                             <strong>Catatan:</strong>
-                            <p>- Laporan ini dibuat secara otomatis oleh sistem CLEANS3 Admin.</p>
+                            <p>- Laporan ini dibuat secara otomatis oleh sistem SICLEAN Admin.</p>
                             <p>- Data mencakup seluruh transaksi dalam periode yang difilter.</p>
                         </div>
                     </td>
@@ -302,7 +302,7 @@
                         <div class="signature-box">
                             <p>Dicetak oleh:</p>
                             <div class="signature-line">
-                                Administrator CLEANS3
+                                Administrator SICLEAN
                             </div>
                             <p style="font-size: 8px; margin-top: 5px;">{{ $tanggal }}</p>
                         </div>

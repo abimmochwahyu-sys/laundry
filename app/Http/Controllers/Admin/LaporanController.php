@@ -8,7 +8,7 @@ use App\Exports\TransaksiExport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
@@ -72,7 +72,11 @@ class LaporanController extends Controller
             'total_akhir' => $transaksis->sum('total_akhir'),
         ];
 
-        return view('admin.exports.laporan-thermal', $data);
+        // Generate PDF menggunakan template A4 Professional
+        $pdf = Pdf::loadView('admin.exports.laporan-pdf', $data)
+                  ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('laporan-transaksi-' . now()->format('Y-m-d') . '.pdf');
     }
 
     // ===============================

@@ -111,7 +111,7 @@ class TransaksiExport implements
     public function styles(Worksheet $sheet)
     {
         // Judul
-        $sheet->setCellValue('A1', 'LAPORAN TRANSAKSI ADMIN - CLEANS3');
+        $sheet->setCellValue('A1', 'LAPORAN TRANSAKSI ADMIN - SICLEAN');
         $sheet->mergeCells('A1:L1');
         $sheet->getStyle('A1')->applyFromArray([
             'font' => ['bold' => true, 'size' => 16, 'color' => ['rgb' => '4F46E5']],
