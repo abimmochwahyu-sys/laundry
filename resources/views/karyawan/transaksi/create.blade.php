@@ -31,16 +31,53 @@
 
                         <div class="form-group">
                             <label class="font-weight-bold">
-                                <i class="fas fa-user mr-1 text-primary"></i> Pelanggan
+                                <i class="fas fa-users mr-1 text-primary"></i> Tipe Pelanggan
                             </label>
-                            <select class="form-control" name="user_id" required>
-                                <option value="" disabled selected>-- Pilih Pelanggan --</option>
-                                @foreach($pelanggans as $pelanggan)
-                                    <option value="{{ $pelanggan->id }}">
-                                        {{ $pelanggan->name }} ({{ $pelanggan->email }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="tipe_reg" name="tipe_pelanggan" class="custom-control-input" value="reg" checked>
+                                        <label class="custom-control-label" for="tipe_reg">Pelanggan Terdaftar</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="tipe_guest" name="tipe_pelanggan" class="custom-control-input" value="guest">
+                                        <label class="custom-control-label" for="tipe_guest">Guest (Tamu)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="section-reg">
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    <i class="fas fa-user mr-1 text-primary"></i> Pelanggan
+                                </label>
+                                <select class="form-control" name="user_id" id="user_id" required>
+                                    <option value="" disabled selected>-- Pilih Pelanggan --</option>
+                                    @foreach($pelanggans as $pelanggan)
+                                        <option value="{{ $pelanggan->id }}">
+                                            {{ $pelanggan->name }} ({{ $pelanggan->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="section-guest" style="display:none;">
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    <i class="fas fa-user-tag mr-1 text-primary"></i> Nama Guest
+                                </label>
+                                <input type="text" name="nama_guest" id="nama_guest" class="form-control" placeholder="Masukkan nama pelanggan">
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    <i class="fas fa-phone mr-1 text-primary"></i> No. HP Guest
+                                </label>
+                                <input type="text" name="no_hp_guest" id="no_hp_guest" class="form-control" placeholder="Masukkan nomor HP">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -212,6 +249,34 @@ document.addEventListener('DOMContentLoaded', () => {
     layanan.addEventListener('change', hitung);
     berat.addEventListener('input', hitung);
     diskonSelect.addEventListener('change', hitung);
+
+    // Toggle Pelanggan / Guest
+    const tipeReg = document.getElementById('tipe_reg');
+    const tipeGuest = document.getElementById('tipe_guest');
+    const sectionReg = document.getElementById('section-reg');
+    const sectionGuest = document.getElementById('section-guest');
+    const userId = document.getElementById('user_id');
+    const namaGuest = document.getElementById('nama_guest');
+    const noHpGuest = document.getElementById('no_hp_guest');
+
+    function togglePelanggan() {
+        if (tipeReg.checked) {
+            sectionReg.style.display = 'block';
+            sectionGuest.style.display = 'none';
+            userId.required = true;
+            namaGuest.required = false;
+            noHpGuest.required = false;
+        } else {
+            sectionReg.style.display = 'none';
+            sectionGuest.style.display = 'block';
+            userId.required = false;
+            namaGuest.required = true;
+            noHpGuest.required = true;
+        }
+    }
+
+    tipeReg.addEventListener('change', togglePelanggan);
+    tipeGuest.addEventListener('change', togglePelanggan);
 });
 </script>
 @endpush

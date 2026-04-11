@@ -84,7 +84,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('admin.transaksi.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('karyawan.transaksi.index') }}" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left mr-1"></i> Kembali
                                 </a>
                                 <button type="submit" class="btn btn-primary">
@@ -109,7 +109,7 @@
                             </tr>
                             <tr>
                                 <th>Pelanggan</th>
-                                <td>: {{ $transaksi->user->name }}</td>
+                                <td>: {{ $transaksi->customer_name }}</td>
                             </tr>
                             <tr>
                                 <th>Layanan</th>

@@ -43,7 +43,18 @@
                             </tr>
                             <tr>
                                 <th>Pelanggan</th>
-                                <td>{{ $transaksi->user->name }} ({{ $transaksi->user->email }})</td>
+                                <td>
+                                    {{ $transaksi->customer_name }}
+                                    @if($transaksi->user)
+                                        ({{ $transaksi->user->email }})
+                                    @else
+                                        <span class="badge bg-secondary text-white ml-2">Guest</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>No. Telepon</th>
+                                <td>{{ $transaksi->customer_phone ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th>Jenis Layanan</th>

@@ -37,7 +37,7 @@
                                 @foreach ($transaksis as $transaksi)
                                     <tr>
                                         <td>{{ $transaksi->kode_transaksi }}</td>
-                                        <td>{{ $transaksi->user->name }}</td>
+                                        <td>{{ $transaksi->customer_name }}</td>
                                         <td>{{ $transaksi->layanan->jenis_layanan }}</td>
                                         <td>{{ $transaksi->berat }} kg</td>
                                         <td>Rp {{ number_format($transaksi->total_akhir, 0, ',', '.') }}</td>

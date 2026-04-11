@@ -43,7 +43,9 @@ class KaryawanTransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
+            'nama_guest' => 'required_without:user_id|nullable|string|max:255',
+            'no_hp_guest' => 'required_without:user_id|nullable|string|max:20',
             'layanan_id' => 'required|exists:layanans,id',
             'berat' => 'required|numeric|min:0.1',
             'metode_pembayaran' => 'required|in:cash,midtrans',
@@ -74,6 +76,8 @@ class KaryawanTransaksiController extends Controller
 
         $transaksi = Transaksi::create([
             'user_id' => $request->user_id,
+            'nama_guest' => $request->nama_guest,
+            'no_hp_guest' => $request->no_hp_guest,
             'layanan_id' => $request->layanan_id,
             'berat' => $request->berat,
             'diskon_id' => $request->diskon_id,
@@ -206,8 +210,9 @@ class KaryawanTransaksiController extends Controller
                 'gross_amount' => $transaksi->total_akhir,
             ],
             'customer_details' => [
-                'first_name' => $transaksi->user->name,
-                'email' => $transaksi->user->email,
+                'first_name' => $transaksi->customer_name,
+                'email' => $transaksi->user ? $transaksi->user->email : 'guest@siclean.com',
+                'phone' => $transaksi->customer_phone,
             ],
         ];
 

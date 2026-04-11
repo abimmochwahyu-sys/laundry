@@ -33,6 +33,8 @@ class Transaksi extends Model
         // optional untuk Midtrans
         'snap_token',
         'payment_type',
+        'nama_guest',
+        'no_hp_guest',
     ];
 
     /**
@@ -61,6 +63,25 @@ class Transaksi extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Accessor untuk nama pelanggan (User atau Guest)
+     */
+    public function getCustomerNameAttribute()
+    {
+        return $this->user ? $this->user->name : ($this->nama_guest ?? 'Guest');
+    }
+
+    /**
+     * Accessor untuk nomor telepon (User->Pelanggan atau Guest)
+     */
+    public function getCustomerPhoneAttribute()
+    {
+        if ($this->user && $this->user->pelanggan) {
+            return $this->user->pelanggan->telepon;
+        }
+        return $this->no_hp_guest;
+    }
+
     // Transaksi punya satu layanan
     public function layanan()
     {
@@ -82,18 +103,18 @@ class Transaksi extends Model
     // total_harga dengan format rupiah
     public function getTotalHargaFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->total_harga, 0, ',', '.');
     }
 
     // subtotal dengan format rupiah
     public function getSubtotalFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->subtotal, 0, ',', '.');
     }
 
     // total_diskon dengan format rupiah
     public function getTotalDiskonFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->total_diskon, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->total_diskon, 0, ',', '.');
     }
 }

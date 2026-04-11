@@ -105,6 +105,14 @@
     {{-- INFO --}}
     <table>
         <tr>
+            <td class="label">Pelanggan</td>
+            <td class="text-right">{{ $transaksi->customer_name }}</td>
+        </tr>
+        <tr>
+            <td class="label">No. HP</td>
+            <td class="text-right">{{ $transaksi->customer_phone ?? '-' }}</td>
+        </tr>
+        <tr>
             <td class="label">Kode</td>
             <td class="text-right">{{ $transaksi->kode_transaksi }}</td>
         </tr>
